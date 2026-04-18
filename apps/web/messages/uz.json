@@ -1,203 +1,203 @@
 {
-  "meta": {
-    "title": "ithink — biznes uchun IT yechimlari",
-    "description": "Infratuzilma, avtomatlashtirish, ishlab chiqish va qoʻllab-quvvatlash.",
-    "brand": "ithink"
-  },
-  "nav": {
-    "home": "Asosiy",
-    "services": "Xizmatlar",
-    "faq": "FAQ"
-  },
-  "chrome": {
-    "close": "Yopish",
-    "back": "Orqaga",
-    "more": "Yana",
-    "language": "Til"
-  },
-  "languages": {
-    "ru": "Русский",
-    "uz": "Oʻzbekcha",
-    "en": "English"
-  },
-  "home": {
-    "eyebrow": "ithink mini app",
-    "hello": {
-      "named": "Xush kelibsiz: {name} 👋",
-      "anonymous": "Xush kelibsiz 👋"
-    },
-    "title": "Biznesingiz uchun ishlaydigan IT yechimlari",
-    "subtitle": "Infratuzilma, CRM, avtomatlashtirish, ishlab chiqish va qoʻllab-quvvatlash — kalit topshirish.",
-    "stats": {
-      "clients": "Mijozlar",
-      "projects": "Loyihalar",
-      "satisfaction": "Qoniqish"
-    },
-    "promo": {
-      "title": "Bepul konsultatsiya",
-      "subtitle": "1 soat ichida javob beramiz",
-      "cta": "Ariza qoldirish"
-    },
-    "entries": {
-      "services": {
-        "title": "Xizmatlar",
-        "subtitle": "8 ta asosiy yoʻnalish"
-      },
-      "portfolio": {
-        "title": "Keyslar",
-        "subtitle": "72+ yakunlangan loyiha"
-      },
-      "request": {
-        "title": "Ariza",
-        "subtitle": "Konsultatsiya yoki narx"
-      },
-      "faq": {
-        "title": "FAQ va aloqa",
-        "subtitle": "Javoblar va menejer bilan chat"
-      }
-    }
-  },
-  "services": {
-    "title": "Xizmatlar",
-    "subtitle": "Oʻsib borayotgan kompaniyalar uchun toʻliq IT",
-    "it-infrastructure": {
-      "title": "IT infratuzilma",
-      "short": "Serverlar, tarmoqlar, bulut, kirish nazorati",
-      "description": "Ishonchli IT infratuzilmani loyihalash va joriy etish: serverlar, tarmoqlar, bulutli xizmatlar, kirish nazorati va videokuzatuv."
-    },
-    "managed-it-services": {
-      "title": "Managed IT Services",
-      "short": "24/7 monitoring va qoʻllab-quvvatlash",
-      "description": "Real SLA bilan MSP shartnomasi: 24/7 monitoring, proaktiv xizmat, bir soat ichida javob."
-    },
-    "crm-sales-automation": {
-      "title": "CRM va sotuvlarni avtomatlashtirish",
-      "short": "amoCRM, Bitrix24, integratsiyalar",
-      "description": "amoCRM va Bitrix24 joriy etish va sozlash, telefoniya, messenjerlar va sayt bilan integratsiyalar."
-    },
-    "business-process-automation": {
-      "title": "Jarayonlarni avtomatlashtirish",
-      "short": "Botlar, integratsiyalar, AI",
-      "description": "Telegram botlar, RPA, tizimlararo integratsiyalar va AI yechimlar."
-    },
-    "custom-software-development": {
-      "title": "Dasturiy taʼminot ishlab chiqish",
-      "short": "Veb, Telegram Mini Apps, tizimlar",
-      "description": "Prototipdan prodakshnga qadar toʻliq sikl. Veb, mobil, Telegram Mini Apps va ichki tizimlar."
-    },
-    "it-audit-consulting": {
-      "title": "IT audit va konsalting",
-      "short": "Mustaqil baho va yoʻl xaritasi",
-      "description": "Infratuzilma, jarayonlar va xavfsizlik auditi, yaxshilash rejasi va investitsiyalar bahosi."
-    },
-    "software-licenses": {
-      "title": "Dasturiy taʼminot litsenziyalari",
-      "short": "Microsoft, xavfsizlik, dizayn",
-      "description": "Rasmiy Microsoft litsenziyalari, antivirus, dizayn va ishlab chiqish vositalari."
-    },
-    "corporate-training": {
-      "title": "Korporativ oʻqitish",
-      "short": "Sertifikatlar va amaliy kurslar",
-      "description": "Xodimlarni IT yoʻnalishlari boʻyicha oʻqitish va sertifikatlash."
-    },
-    "detail": {
-      "benefits": "Siz nimaga ega boʻlasiz",
-      "cases": "Bogʻliq keyslar",
-      "cta": "Ariza qoldirish"
-    }
-  },
-  "portfolio": {
-    "title": "Keyslar",
-    "subtitle": "Faxr bilan eslatadigan loyihalar",
-    "filters": {
-      "all": "Barchasi",
-      "byService": "Xizmat boʻyicha",
-      "byTech": "Texnologiya boʻyicha"
-    },
-    "detail": {
-      "client": "Mijoz",
-      "year": "Yil",
-      "tech": "Stek",
-      "services": "Xizmatlar"
-    }
-  },
-  "request": {
-    "title": "Ariza qoldirish",
-    "subtitle": "Bir soat ichida javob beramiz",
-    "steps": {
-      "service": "Xizmat",
-      "need": "Vazifa",
-      "contact": "Aloqa"
-    },
-    "fields": {
-      "service": "Xizmatni tanlang",
-      "description": "Vazifani taʼriflang",
-      "descriptionPlaceholder": "Nima qilish kerak, muddatlar, byudjet — agar maʼlum boʻlsa",
-      "name": "Ismingiz",
-      "phone": "Telefon",
-      "email": "Email (ixtiyoriy)",
-      "submit": "Yuborish",
-      "submitting": "Yuborilmoqda..."
-    },
-    "success": {
-      "title": "Ariza yuborildi",
-      "body": "Bir soat ichida siz bilan bogʻlanamiz.",
-      "close": "Yopish"
-    },
-    "errors": {
-      "generic": "Xatolik yuz berdi. Qayta urinib koʻring.",
-      "validation": "Toʻldirilgan maydonlarni tekshiring.",
-      "noTelegram": "Mini-ilovani Telegramdan oching."
-    }
-  },
-  "faq": {
-    "title": "FAQ",
-    "subtitle": "Koʻp beriladigan savollarga javoblar",
-    "categories": {
-      "general": "Umumiy",
-      "pricing": "Narxlar",
-      "process": "Jarayon",
-      "support": "Qoʻllab-quvvatlash",
-      "security": "Xavfsizlik"
-    },
-    "chatWithSales": {
-      "title": "Javob topmadingizmi?",
-      "body": "Telegramda menejerga yozing",
-      "cta": "Menejer bilan bogʻlanish"
-    },
-    "entries": {
-      "faq-what-we-do": {
-        "q": "ithink nima bilan shugʻullanadi?",
-        "a": "Toshkentdagi B2B IT kompaniyamiz. Infratuzilma quramiz, jarayonlarni avtomatlashtirilamiz, dasturiy taʼminot ishlab chiqamiz, jamoalarni oʻqitamiz."
-      },
-      "faq-response-time": {
-        "q": "Qanchalik tez javob berasiz?",
-        "a": "Ish vaqtida bir soat ichida. MSP shartnomalarida — SLA boʻyicha."
-      },
-      "faq-pricing-model": {
-        "q": "Narx qanday shakllanadi?",
-        "a": "Loyihalar — texnik topshiriq boʻyicha. Qoʻllab-quvvatlash — oylik MSP. Konsalting — time & material."
-      },
-      "faq-project-timeline": {
-        "q": "Amalga oshirish muddatlari?",
-        "a": "MVP uchun 2 hafta, enterprise tizimlar uchun 3–6 oy. Auditdan soʻng aniq baho beramiz."
-      },
-      "faq-data-security": {
-        "q": "Maʼlumotlar qanday himoyalanadi?",
-        "a": "NDA, shifrlash, cheklangan kirish, audit. Sezgir tizimlar uchun on-premise."
-      },
-      "faq-payment-terms": {
-        "q": "Toʻlov shartlari qanday?",
-        "a": "Bosqichma-bosqich: avans, oraliq, yakuniy toʻlov. MSP — oylik."
-      },
-      "faq-post-launch-support": {
-        "q": "Ishga tushirilgandan keyin qoʻllab-quvvatlaysizmi?",
-        "a": "Ha. Kafolat muddati bepul, keyin MSP yoki fix-per-ticket."
-      },
-      "faq-nda": {
-        "q": "NDA imzolaysizmi?",
-        "a": "Ha, har doim. Sizning shabloningiz yoki bizning."
-      }
-    }
-  }
+	"meta": {
+		"title": "ithink — biznes uchun IT yechimlari",
+		"description": "Infratuzilma, avtomatlashtirish, ishlab chiqish va qoʻllab-quvvatlash.",
+		"brand": "ithink"
+	},
+	"nav": {
+		"home": "Asosiy",
+		"services": "Xizmatlar",
+		"faq": "FAQ"
+	},
+	"chrome": {
+		"close": "Yopish",
+		"back": "Orqaga",
+		"more": "Yana",
+		"language": "Til"
+	},
+	"languages": {
+		"ru": "Русский",
+		"uz": "Oʻzbekcha",
+		"en": "English"
+	},
+	"home": {
+		"eyebrow": "ithink mini app",
+		"hello": {
+			"named": "Xush kelibsiz: {name} 👋",
+			"anonymous": "Xush kelibsiz 👋"
+		},
+		"title": "Biznesingiz uchun ishlaydigan IT yechimlari",
+		"subtitle": "Infratuzilma, CRM, avtomatlashtirish, ishlab chiqish va qoʻllab-quvvatlash — kalit topshirish.",
+		"stats": {
+			"clients": "Mijozlar",
+			"projects": "Loyihalar",
+			"satisfaction": "Qoniqish"
+		},
+		"promo": {
+			"title": "Bepul konsultatsiya",
+			"subtitle": "1 soat ichida javob beramiz",
+			"cta": "Ariza qoldirish"
+		},
+		"entries": {
+			"services": {
+				"title": "Xizmatlar",
+				"subtitle": "8 ta asosiy yoʻnalish"
+			},
+			"portfolio": {
+				"title": "Keyslar",
+				"subtitle": "72+ yakunlangan loyiha"
+			},
+			"request": {
+				"title": "Ariza",
+				"subtitle": "Konsultatsiya yoki narx"
+			},
+			"faq": {
+				"title": "FAQ va aloqa",
+				"subtitle": "Javoblar va menejer bilan chat"
+			}
+		}
+	},
+	"services": {
+		"title": "Xizmatlar",
+		"subtitle": "Oʻsib borayotgan kompaniyalar uchun toʻliq IT",
+		"it-infrastructure": {
+			"title": "IT infratuzilma",
+			"short": "Serverlar, tarmoqlar, bulut, kirish nazorati",
+			"description": "Ishonchli IT infratuzilmani loyihalash va joriy etish: serverlar, tarmoqlar, bulutli xizmatlar, kirish nazorati va videokuzatuv."
+		},
+		"managed-it-services": {
+			"title": "Managed IT Services",
+			"short": "24/7 monitoring va qoʻllab-quvvatlash",
+			"description": "Real SLA bilan MSP shartnomasi: 24/7 monitoring, proaktiv xizmat, bir soat ichida javob."
+		},
+		"crm-sales-automation": {
+			"title": "CRM va sotuvlarni avtomatlashtirish",
+			"short": "amoCRM, Bitrix24, integratsiyalar",
+			"description": "amoCRM va Bitrix24 joriy etish va sozlash, telefoniya, messenjerlar va sayt bilan integratsiyalar."
+		},
+		"business-process-automation": {
+			"title": "Jarayonlarni avtomatlashtirish",
+			"short": "Botlar, integratsiyalar, AI",
+			"description": "Telegram botlar, RPA, tizimlararo integratsiyalar va AI yechimlar."
+		},
+		"custom-software-development": {
+			"title": "Dasturiy taʼminot ishlab chiqish",
+			"short": "Veb, Telegram Mini Apps, tizimlar",
+			"description": "Prototipdan prodakshnga qadar toʻliq sikl. Veb, mobil, Telegram Mini Apps va ichki tizimlar."
+		},
+		"it-audit-consulting": {
+			"title": "IT audit va konsalting",
+			"short": "Mustaqil baho va yoʻl xaritasi",
+			"description": "Infratuzilma, jarayonlar va xavfsizlik auditi, yaxshilash rejasi va investitsiyalar bahosi."
+		},
+		"software-licenses": {
+			"title": "Dasturiy taʼminot litsenziyalari",
+			"short": "Microsoft, xavfsizlik, dizayn",
+			"description": "Rasmiy Microsoft litsenziyalari, antivirus, dizayn va ishlab chiqish vositalari."
+		},
+		"corporate-training": {
+			"title": "Korporativ oʻqitish",
+			"short": "Sertifikatlar va amaliy kurslar",
+			"description": "Xodimlarni IT yoʻnalishlari boʻyicha oʻqitish va sertifikatlash."
+		},
+		"detail": {
+			"benefits": "Siz nimaga ega boʻlasiz",
+			"cases": "Bogʻliq keyslar",
+			"cta": "Ariza qoldirish"
+		}
+	},
+	"portfolio": {
+		"title": "Keyslar",
+		"subtitle": "Faxr bilan eslatadigan loyihalar",
+		"filters": {
+			"all": "Barchasi",
+			"byService": "Xizmat boʻyicha",
+			"byTech": "Texnologiya boʻyicha"
+		},
+		"detail": {
+			"client": "Mijoz",
+			"year": "Yil",
+			"tech": "Stek",
+			"services": "Xizmatlar"
+		}
+	},
+	"request": {
+		"title": "Ariza qoldirish",
+		"subtitle": "Bir soat ichida javob beramiz",
+		"steps": {
+			"service": "Xizmat",
+			"need": "Vazifa",
+			"contact": "Aloqa"
+		},
+		"fields": {
+			"service": "Xizmatni tanlang",
+			"description": "Vazifani taʼriflang",
+			"descriptionPlaceholder": "Nima qilish kerak, muddatlar, byudjet — agar maʼlum boʻlsa",
+			"name": "Ismingiz",
+			"phone": "Telefon",
+			"email": "Email (ixtiyoriy)",
+			"submit": "Yuborish",
+			"submitting": "Yuborilmoqda..."
+		},
+		"success": {
+			"title": "Ariza yuborildi",
+			"body": "Bir soat ichida siz bilan bogʻlanamiz.",
+			"close": "Yopish"
+		},
+		"errors": {
+			"generic": "Xatolik yuz berdi. Qayta urinib koʻring.",
+			"validation": "Toʻldirilgan maydonlarni tekshiring.",
+			"noTelegram": "Mini-ilovani Telegramdan oching."
+		}
+	},
+	"faq": {
+		"title": "FAQ",
+		"subtitle": "Koʻp beriladigan savollarga javoblar",
+		"categories": {
+			"general": "Umumiy",
+			"pricing": "Narxlar",
+			"process": "Jarayon",
+			"support": "Qoʻllab-quvvatlash",
+			"security": "Xavfsizlik"
+		},
+		"chatWithSales": {
+			"title": "Javob topmadingizmi?",
+			"body": "Telegramda menejerga yozing",
+			"cta": "Menejer bilan bogʻlanish"
+		},
+		"entries": {
+			"faq-what-we-do": {
+				"q": "ITHINK nima bilan shugʻullanadi?",
+				"a": "Toshkentdagi B2B IT kompaniyamiz. Infratuzilma quramiz, jarayonlarni avtomatlashtirilamiz, dasturiy taʼminot ishlab chiqamiz, jamoalarni oʻqitamiz."
+			},
+			"faq-response-time": {
+				"q": "Qanchalik tez javob berasiz?",
+				"a": "Ish vaqtida bir soat ichida. MSP shartnomalarida — SLA boʻyicha."
+			},
+			"faq-pricing-model": {
+				"q": "Narx qanday shakllanadi?",
+				"a": "Loyihalar — texnik topshiriq boʻyicha. Qoʻllab-quvvatlash — oylik MSP. Konsalting — time & material."
+			},
+			"faq-project-timeline": {
+				"q": "Amalga oshirish muddatlari?",
+				"a": "MVP uchun 2 hafta, enterprise tizimlar uchun 3–6 oy. Auditdan soʻng aniq baho beramiz."
+			},
+			"faq-data-security": {
+				"q": "Maʼlumotlar qanday himoyalanadi?",
+				"a": "NDA, shifrlash, cheklangan kirish, audit. Sezgir tizimlar uchun on-premise."
+			},
+			"faq-payment-terms": {
+				"q": "Toʻlov shartlari qanday?",
+				"a": "Bosqichma-bosqich: avans, oraliq, yakuniy toʻlov. MSP — oylik."
+			},
+			"faq-post-launch-support": {
+				"q": "Ishga tushirilgandan keyin qoʻllab-quvvatlaysizmi?",
+				"a": "Ha. Kafolat muddati bepul, keyin MSP yoki fix-per-ticket."
+			},
+			"faq-nda": {
+				"q": "NDA imzolaysizmi?",
+				"a": "Ha, har doim. Sizning shabloningiz yoki bizning."
+			}
+		}
+	}
 }

@@ -1,203 +1,203 @@
 {
-  "meta": {
-    "title": "ithink — IT solutions for business",
-    "description": "Infrastructure, automation, development, and support for growing companies.",
-    "brand": "ithink"
-  },
-  "nav": {
-    "home": "Home",
-    "services": "Services",
-    "faq": "FAQ"
-  },
-  "chrome": {
-    "close": "Close",
-    "back": "Back",
-    "more": "More",
-    "language": "Language"
-  },
-  "languages": {
-    "ru": "Русский",
-    "uz": "Oʻzbekcha",
-    "en": "English"
-  },
-  "home": {
-    "eyebrow": "ithink mini app",
-    "hello": {
-      "named": "Welcome: {name} 👋",
-      "anonymous": "Welcome 👋"
-    },
-    "title": "IT solutions that work for your business",
-    "subtitle": "Turnkey infrastructure, CRM, automation, development, and support.",
-    "stats": {
-      "clients": "Clients",
-      "projects": "Projects",
-      "satisfaction": "Satisfaction"
-    },
-    "promo": {
-      "title": "Free consultation",
-      "subtitle": "We respond within 1 hour",
-      "cta": "Request now"
-    },
-    "entries": {
-      "services": {
-        "title": "Services",
-        "subtitle": "8 practice areas"
-      },
-      "portfolio": {
-        "title": "Cases",
-        "subtitle": "72+ completed projects"
-      },
-      "request": {
-        "title": "Request",
-        "subtitle": "Consultation or quote"
-      },
-      "faq": {
-        "title": "FAQ & contact",
-        "subtitle": "Answers and live chat"
-      }
-    }
-  },
-  "services": {
-    "title": "Services",
-    "subtitle": "Full-stack IT for growing companies",
-    "it-infrastructure": {
-      "title": "IT Infrastructure",
-      "short": "Servers, networks, cloud, access control",
-      "description": "Design and deployment of reliable IT infrastructure: servers, networks, cloud services, access control and video surveillance."
-    },
-    "managed-it-services": {
-      "title": "Managed IT Services",
-      "short": "24/7 monitoring and support",
-      "description": "MSP contracts with real SLAs: 24/7 monitoring, proactive maintenance, response within one hour."
-    },
-    "crm-sales-automation": {
-      "title": "CRM & Sales Automation",
-      "short": "amoCRM, Bitrix24, integrations",
-      "description": "Implementation and customization of amoCRM and Bitrix24 with telephony, messenger, and website integrations."
-    },
-    "business-process-automation": {
-      "title": "Process Automation",
-      "short": "Bots, integrations, AI",
-      "description": "Telegram bots, RPA, inter-system integrations and AI-powered automation for routine operations."
-    },
-    "custom-software-development": {
-      "title": "Custom Software",
-      "short": "Web, Telegram Mini Apps, systems",
-      "description": "End-to-end development — from prototype to production. Web, mobile, Telegram Mini Apps, and internal systems."
-    },
-    "it-audit-consulting": {
-      "title": "IT Audit & Consulting",
-      "short": "Independent review and roadmap",
-      "description": "Infrastructure, process, and security audit with an improvement plan and investment estimate."
-    },
-    "software-licenses": {
-      "title": "Software Licenses",
-      "short": "Microsoft, security, design",
-      "description": "Official Microsoft licenses, antivirus, design and development tooling."
-    },
-    "corporate-training": {
-      "title": "Corporate Training",
-      "short": "Certification and hands-on courses",
-      "description": "Training and certification for teams across key IT disciplines."
-    },
-    "detail": {
-      "benefits": "What you get",
-      "cases": "Related cases",
-      "cta": "Request a quote"
-    }
-  },
-  "portfolio": {
-    "title": "Cases",
-    "subtitle": "Projects we're proud of",
-    "filters": {
-      "all": "All",
-      "byService": "By service",
-      "byTech": "By tech"
-    },
-    "detail": {
-      "client": "Client",
-      "year": "Year",
-      "tech": "Stack",
-      "services": "Services"
-    }
-  },
-  "request": {
-    "title": "Request",
-    "subtitle": "We reply within an hour",
-    "steps": {
-      "service": "Service",
-      "need": "Need",
-      "contact": "Contact"
-    },
-    "fields": {
-      "service": "Pick a service",
-      "description": "Describe your need",
-      "descriptionPlaceholder": "What needs to be done, timeline, budget if known",
-      "name": "Your name",
-      "phone": "Phone",
-      "email": "Email (optional)",
-      "submit": "Send request",
-      "submitting": "Sending..."
-    },
-    "success": {
-      "title": "Request sent",
-      "body": "We'll contact you within an hour.",
-      "close": "Close"
-    },
-    "errors": {
-      "generic": "Something went wrong. Please try again.",
-      "validation": "Check the form fields.",
-      "noTelegram": "Open this mini app from Telegram."
-    }
-  },
-  "faq": {
-    "title": "FAQ",
-    "subtitle": "Answers to common questions",
-    "categories": {
-      "general": "General",
-      "pricing": "Pricing",
-      "process": "Process",
-      "support": "Support",
-      "security": "Security"
-    },
-    "chatWithSales": {
-      "title": "Didn't find the answer?",
-      "body": "Message a manager on Telegram",
-      "cta": "Contact manager"
-    },
-    "entries": {
-      "faq-what-we-do": {
-        "q": "What does ithink do?",
-        "a": "We are a B2B IT company based in Tashkent. We build infrastructure, automate processes, develop software, and train teams."
-      },
-      "faq-response-time": {
-        "q": "How fast do you respond?",
-        "a": "During business hours — within one hour. On MSP contracts — per SLA."
-      },
-      "faq-pricing-model": {
-        "q": "How is pricing structured?",
-        "a": "Fixed bids for scoped projects. Monthly MSP contracts for ongoing support. Time & material for consulting."
-      },
-      "faq-project-timeline": {
-        "q": "What are typical timelines?",
-        "a": "From 2 weeks for an MVP to 3–6 months for enterprise systems. We commit to specifics after the audit."
-      },
-      "faq-data-security": {
-        "q": "How is data protected?",
-        "a": "NDA, encryption in transit and at rest, least-privilege access, audit. Sensitive systems can be on-premise."
-      },
-      "faq-payment-terms": {
-        "q": "What are payment terms?",
-        "a": "Staged: deposit, milestone payments, final. MSP is billed monthly."
-      },
-      "faq-post-launch-support": {
-        "q": "Do you support after launch?",
-        "a": "Yes. Free warranty period, then MSP or pay-per-ticket support."
-      },
-      "faq-nda": {
-        "q": "Do you sign NDAs?",
-        "a": "Yes, always. We can use your template or provide ours."
-      }
-    }
-  }
+	"meta": {
+		"title": "ithink — IT solutions for business",
+		"description": "Infrastructure, automation, development, and support for growing companies.",
+		"brand": "ithink"
+	},
+	"nav": {
+		"home": "Home",
+		"services": "Services",
+		"faq": "FAQ"
+	},
+	"chrome": {
+		"close": "Close",
+		"back": "Back",
+		"more": "More",
+		"language": "Language"
+	},
+	"languages": {
+		"ru": "Русский",
+		"uz": "Oʻzbekcha",
+		"en": "English"
+	},
+	"home": {
+		"eyebrow": "ithink mini app",
+		"hello": {
+			"named": "Welcome: {name} 👋",
+			"anonymous": "Welcome 👋"
+		},
+		"title": "IT solutions that work for your business",
+		"subtitle": "Turnkey infrastructure, CRM, automation, development, and support.",
+		"stats": {
+			"clients": "Clients",
+			"projects": "Projects",
+			"satisfaction": "Satisfaction"
+		},
+		"promo": {
+			"title": "Free consultation",
+			"subtitle": "We respond within 1 hour",
+			"cta": "Request now"
+		},
+		"entries": {
+			"services": {
+				"title": "Services",
+				"subtitle": "8 practice areas"
+			},
+			"portfolio": {
+				"title": "Cases",
+				"subtitle": "72+ completed projects"
+			},
+			"request": {
+				"title": "Request",
+				"subtitle": "Consultation or quote"
+			},
+			"faq": {
+				"title": "FAQ & contact",
+				"subtitle": "Answers and live chat"
+			}
+		}
+	},
+	"services": {
+		"title": "Services",
+		"subtitle": "Full-stack IT for growing companies",
+		"it-infrastructure": {
+			"title": "IT Infrastructure",
+			"short": "Servers, networks, cloud, access control",
+			"description": "Design and deployment of reliable IT infrastructure: servers, networks, cloud services, access control and video surveillance."
+		},
+		"managed-it-services": {
+			"title": "Managed IT Services",
+			"short": "24/7 monitoring and support",
+			"description": "MSP contracts with real SLAs: 24/7 monitoring, proactive maintenance, response within one hour."
+		},
+		"crm-sales-automation": {
+			"title": "CRM & Sales Automation",
+			"short": "amoCRM, Bitrix24, integrations",
+			"description": "Implementation and customization of amoCRM and Bitrix24 with telephony, messenger, and website integrations."
+		},
+		"business-process-automation": {
+			"title": "Process Automation",
+			"short": "Bots, integrations, AI",
+			"description": "Telegram bots, RPA, inter-system integrations and AI-powered automation for routine operations."
+		},
+		"custom-software-development": {
+			"title": "Custom Software",
+			"short": "Web, Telegram Mini Apps, systems",
+			"description": "End-to-end development — from prototype to production. Web, mobile, Telegram Mini Apps, and internal systems."
+		},
+		"it-audit-consulting": {
+			"title": "IT Audit & Consulting",
+			"short": "Independent review and roadmap",
+			"description": "Infrastructure, process, and security audit with an improvement plan and investment estimate."
+		},
+		"software-licenses": {
+			"title": "Software Licenses",
+			"short": "Microsoft, security, design",
+			"description": "Official Microsoft licenses, antivirus, design and development tooling."
+		},
+		"corporate-training": {
+			"title": "Corporate Training",
+			"short": "Certification and hands-on courses",
+			"description": "Training and certification for teams across key IT disciplines."
+		},
+		"detail": {
+			"benefits": "What you get",
+			"cases": "Related cases",
+			"cta": "Request a quote"
+		}
+	},
+	"portfolio": {
+		"title": "Cases",
+		"subtitle": "Projects we're proud of",
+		"filters": {
+			"all": "All",
+			"byService": "By service",
+			"byTech": "By tech"
+		},
+		"detail": {
+			"client": "Client",
+			"year": "Year",
+			"tech": "Stack",
+			"services": "Services"
+		}
+	},
+	"request": {
+		"title": "Request",
+		"subtitle": "We reply within an hour",
+		"steps": {
+			"service": "Service",
+			"need": "Need",
+			"contact": "Contact"
+		},
+		"fields": {
+			"service": "Pick a service",
+			"description": "Describe your need",
+			"descriptionPlaceholder": "What needs to be done, timeline, budget if known",
+			"name": "Your name",
+			"phone": "Phone",
+			"email": "Email (optional)",
+			"submit": "Send request",
+			"submitting": "Sending..."
+		},
+		"success": {
+			"title": "Request sent",
+			"body": "We'll contact you within an hour.",
+			"close": "Close"
+		},
+		"errors": {
+			"generic": "Something went wrong. Please try again.",
+			"validation": "Check the form fields.",
+			"noTelegram": "Open this mini app from Telegram."
+		}
+	},
+	"faq": {
+		"title": "FAQ",
+		"subtitle": "Answers to common questions",
+		"categories": {
+			"general": "General",
+			"pricing": "Pricing",
+			"process": "Process",
+			"support": "Support",
+			"security": "Security"
+		},
+		"chatWithSales": {
+			"title": "Didn't find the answer?",
+			"body": "Message a manager on Telegram",
+			"cta": "Contact manager"
+		},
+		"entries": {
+			"faq-what-we-do": {
+				"q": "What does ITHINK do?",
+				"a": "We are a B2B IT company based in Tashkent. We build infrastructure, automate processes, develop software, and train teams."
+			},
+			"faq-response-time": {
+				"q": "How fast do you respond?",
+				"a": "During business hours — within one hour. On MSP contracts — per SLA."
+			},
+			"faq-pricing-model": {
+				"q": "How is pricing structured?",
+				"a": "Fixed bids for scoped projects. Monthly MSP contracts for ongoing support. Time & material for consulting."
+			},
+			"faq-project-timeline": {
+				"q": "What are typical timelines?",
+				"a": "From 2 weeks for an MVP to 3–6 months for enterprise systems. We commit to specifics after the audit."
+			},
+			"faq-data-security": {
+				"q": "How is data protected?",
+				"a": "NDA, encryption in transit and at rest, least-privilege access, audit. Sensitive systems can be on-premise."
+			},
+			"faq-payment-terms": {
+				"q": "What are payment terms?",
+				"a": "Staged: deposit, milestone payments, final. MSP is billed monthly."
+			},
+			"faq-post-launch-support": {
+				"q": "Do you support after launch?",
+				"a": "Yes. Free warranty period, then MSP or pay-per-ticket support."
+			},
+			"faq-nda": {
+				"q": "Do you sign NDAs?",
+				"a": "Yes, always. We can use your template or provide ours."
+			}
+		}
+	}
 }
