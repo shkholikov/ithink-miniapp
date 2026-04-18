@@ -1,0 +1,277 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+	--color-background: var(--background);
+	--color-foreground: var(--foreground);
+	--font-sans: var(--font-inter);
+	--font-heading: var(--font-inter);
+	--color-ring: var(--ring);
+	--color-input: var(--input);
+	--color-border: var(--border);
+	--color-destructive: var(--destructive);
+	--color-accent-foreground: var(--accent-foreground);
+	--color-accent: var(--accent);
+	--color-muted-foreground: var(--muted-foreground);
+	--color-muted: var(--muted);
+	--color-secondary-foreground: var(--secondary-foreground);
+	--color-secondary: var(--secondary);
+	--color-primary-foreground: var(--primary-foreground);
+	--color-primary: var(--primary);
+	--color-popover-foreground: var(--popover-foreground);
+	--color-popover: var(--popover);
+	--color-card-foreground: var(--card-foreground);
+	--color-card: var(--card);
+
+	/* Brand tokens (carried over from ithink-web) */
+	--color-brand: #377dff;
+	--color-brand-light: #5b96ff;
+	--color-brand-dark: #2563eb;
+	--color-accent-yellow: #f9b934;
+	--color-surface: #13131f;
+	--color-surface-2: #1a1a2e;
+
+	--radius-sm: calc(var(--radius) * 0.6);
+	--radius-md: calc(var(--radius) * 0.8);
+	--radius-lg: var(--radius);
+	--radius-xl: calc(var(--radius) * 1.4);
+	--radius-2xl: calc(var(--radius) * 1.8);
+}
+
+/* Dark theme (default — matches Telegram Mini App conventions) */
+:root {
+	--background: #0d0d14;
+	--foreground: #e2e8f0;
+	--card: #13131f;
+	--card-foreground: #e2e8f0;
+	--popover: #13131f;
+	--popover-foreground: #e2e8f0;
+	--primary: #377dff;
+	--primary-foreground: #ffffff;
+	--secondary: #1a1a2e;
+	--secondary-foreground: #e2e8f0;
+	--muted: #1a1a2e;
+	--muted-foreground: #8892a4;
+	--accent: #1e1e35;
+	--accent-foreground: #e2e8f0;
+	--destructive: oklch(0.577 0.245 27.325);
+	--border: #1e1e35;
+	--input: #1e1e35;
+	--ring: #377dff;
+	--radius: 0.625rem;
+}
+
+/* Light theme — applied only when Telegram reports light colorScheme */
+.light {
+	--background: #ffffff;
+	--foreground: #1e2022;
+	--card: #f7faff;
+	--card-foreground: #1e2022;
+	--popover: #ffffff;
+	--popover-foreground: #1e2022;
+	--primary: #377dff;
+	--primary-foreground: #ffffff;
+	--secondary: #f0f5ff;
+	--secondary-foreground: #1e2022;
+	--muted: #f0f0f0;
+	--muted-foreground: #677788;
+	--accent: #e8f0ff;
+	--accent-foreground: #1e2022;
+	--border: #e2e8f0;
+	--input: #e2e8f0;
+	--ring: #377dff;
+}
+
+@layer base {
+	* {
+		border-color: var(--border);
+	}
+	body {
+		background: var(--background);
+		color: var(--foreground);
+		-webkit-font-smoothing: antialiased;
+		overscroll-behavior-y: none;
+	}
+	html {
+		font-family: var(--font-sans);
+		scroll-behavior: smooth;
+	}
+}
+
+/* Animated gradient blob (carried over from ithink-web) */
+@keyframes blob {
+	0% {
+		transform: translate(0px, 0px) scale(1);
+	}
+	33% {
+		transform: translate(30px, -50px) scale(1.1);
+	}
+	66% {
+		transform: translate(-20px, 20px) scale(0.9);
+	}
+	100% {
+		transform: translate(0px, 0px) scale(1);
+	}
+}
+
+.animate-blob {
+	animation: blob 7s infinite;
+	will-change: transform;
+}
+.animation-delay-2000 {
+	animation-delay: 2s;
+}
+.animation-delay-4000 {
+	animation-delay: 4s;
+}
+
+/* Marquee scroll (carried over from ithink-web) */
+@keyframes marquee {
+	from {
+		transform: translateX(0);
+	}
+	to {
+		transform: translateX(-50%);
+	}
+}
+
+.animate-marquee {
+	animation: marquee 30s linear infinite;
+}
+
+/* Gradient text (carried over from ithink-web) */
+.gradient-text {
+	background: linear-gradient(135deg, #377dff 0%, #a855f7 50%, #06b6d4 100%);
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	background-clip: text;
+}
+
+.gradient-text-blue {
+	background: linear-gradient(135deg, #377dff 0%, #60a5fa 100%);
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	background-clip: text;
+}
+
+/* Glass card (carried over from ithink-web) */
+.glass-card {
+	background: rgba(255, 255, 255, 0.03);
+	backdrop-filter: blur(12px);
+	border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.light .glass-card {
+	background: rgba(255, 255, 255, 0.7);
+	border-color: rgba(0, 0, 0, 0.08);
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+	*,
+	*::before,
+	*::after {
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.01ms !important;
+	}
+}
+
+/* Noise overlay (carried over from ithink-web) */
+.noise-bg::before {
+	content: "";
+	position: absolute;
+	inset: 0;
+	background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+	pointer-events: none;
+	z-index: 0;
+}
+
+/* ----------------------------------------------------------------------------
+ * Mini-app-specific utilities (match @Wallet / @BotFather visual language)
+ * --------------------------------------------------------------------------- */
+
+/* iOS-style grouped card list — single rounded container with hairline
+ * dividers between rows. Used for service list, FAQ, settings-style screens. */
+.grouped-card {
+	background: var(--card);
+	border-radius: calc(var(--radius) * 1.8);
+	overflow: hidden;
+}
+
+.grouped-card > * + * {
+	border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.light .grouped-card > * + * {
+	border-top-color: rgba(0, 0, 0, 0.06);
+}
+
+/* Colored icon square — per-service visual tag like Wallet's settings icons. */
+.icon-square {
+	display: grid;
+	place-items: center;
+	width: 2rem;
+	height: 2rem;
+	border-radius: 0.5rem;
+	color: #ffffff;
+	flex-shrink: 0;
+}
+
+/* Chrome chip — used for Close / Back / ⋯ in the top bar. */
+.chrome-chip {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.25rem;
+	padding: 0.375rem 0.75rem;
+	border-radius: 9999px;
+	background: rgba(255, 255, 255, 0.06);
+	backdrop-filter: blur(12px);
+	font-size: 0.9375rem;
+	font-weight: 500;
+	color: var(--foreground);
+}
+
+.light .chrome-chip {
+	background: rgba(0, 0, 0, 0.04);
+}
+
+/* Floating pill bottom nav. */
+.bottom-nav {
+	position: fixed;
+	left: 50%;
+	transform: translateX(-50%);
+	bottom: 0.75rem;
+	display: inline-flex;
+	gap: 0.25rem;
+	padding: 0.375rem;
+	background: rgba(19, 19, 31, 0.9);
+	backdrop-filter: blur(16px);
+	border: 1px solid rgba(255, 255, 255, 0.06);
+	border-radius: 9999px;
+	z-index: 40;
+}
+
+.light .bottom-nav {
+	background: rgba(255, 255, 255, 0.9);
+	border-color: rgba(0, 0, 0, 0.06);
+}
+
+.bottom-nav-item {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.375rem;
+	padding: 0.5rem 0.875rem;
+	border-radius: 9999px;
+	font-size: 0.8125rem;
+	font-weight: 500;
+	color: var(--muted-foreground);
+	transition: color 0.2s ease;
+}
+
+.bottom-nav-item[data-active="true"] {
+	color: var(--foreground);
+	background: rgba(55, 125, 255, 0.15);
+	box-shadow: 0 0 20px rgba(55, 125, 255, 0.25);
+}

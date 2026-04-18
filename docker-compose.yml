@@ -1,0 +1,9 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    env_file: apps/web/.env.local
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
