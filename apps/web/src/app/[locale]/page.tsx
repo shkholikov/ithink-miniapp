@@ -18,7 +18,7 @@ export default async function HomePage() {
 						<div className="absolute right-[-20%] bottom-[-30%] h-64 w-64 rounded-full bg-[color:var(--color-accent-yellow)]/10 blur-3xl animate-blob animation-delay-2000" />
 					</div>
 					<div className="relative flex flex-col items-center gap-4">
-						<Image src="/logo.png" alt="ithink" width={64} height={64} priority className="h-12 w-auto" />
+						<Image src="/logo.png" alt="ithink" width={220} height={68} priority className="h-12 w-auto" />
 						<Greeting />
 						<h1 className="text-2xl font-semibold leading-tight text-balance">
 							<span className="gradient-text-blue">{t("title")}</span>
