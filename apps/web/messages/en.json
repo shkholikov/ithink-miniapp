@@ -195,7 +195,6 @@
 		},
 		"submit": "Get a free consultation",
 		"sending": "Sending…",
-		"consentNote": "By clicking the button, you agree to the processing of your data under the <link>privacy policy</link>.",
 		"shareContact": "Share contact",
 		"successTitle": "Request sent",
 		"successNumber": "Request #{id}",

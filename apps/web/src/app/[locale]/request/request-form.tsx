@@ -154,8 +154,6 @@ export function RequestForm({ options, preselected }: Props) {
 						phone: toE164(values.phone, values.phone_country as PhoneCountry),
 						company_size: values.company_size || undefined,
 						description: values.description.trim() || undefined,
-						// Tapping the button is the consent; the note under it says so.
-						consent: true,
 						locale,
 						initData
 					})
@@ -226,7 +224,6 @@ export function RequestForm({ options, preselected }: Props) {
 
 	const optional = <span className="normal-case tracking-normal"> ({t("optional")})</span>;
 	const phone = register("phone");
-	const privacyUrl = `https://ithink.uz/${locale}/privacy`;
 	const knownTitle = options.find((o) => o.slug === knownService)?.title;
 
 	return (
@@ -366,25 +363,6 @@ export function RequestForm({ options, preselected }: Props) {
 				{submitting ? <Loader2 size={16} className="animate-spin" /> : null}
 				<span>{submitting ? t("sending") : t("submit")}</span>
 			</button>
-
-			<p className="px-1 text-center text-xs text-muted-foreground">
-				{t.rich("consentNote", {
-					link: (chunks) => (
-						<a
-							href={privacyUrl}
-							onClick={(event) => {
-								const webApp = getWebApp();
-								if (!webApp) return;
-								event.preventDefault();
-								webApp.openLink(privacyUrl);
-							}}
-							className="text-[color:var(--color-brand)] underline"
-						>
-							{chunks}
-						</a>
-					)
-				})}
-			</p>
 		</form>
 	);
 }
