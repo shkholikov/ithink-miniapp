@@ -1,103 +1,64 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { ChevronDown } from "lucide-react";
-
-const COUNTRIES = [
-	{ code: "UZ", dial: "998" },
-	{ code: "KZ", dial: "7" },
-	{ code: "TJ", dial: "992" },
-	{ code: "KG", dial: "996" },
-	{ code: "TM", dial: "993" },
-	{ code: "RU", dial: "7" },
-	{ code: "TR", dial: "90" },
-	{ code: "AE", dial: "971" }
-] as const;
-
-const OTHER = "OTHER";
-type CountryCode = (typeof COUNTRIES)[number]["code"] | typeof OTHER;
-
-function dialOf(country: CountryCode): string {
-	return COUNTRIES.find((c) => c.code === country)?.dial ?? "";
-}
-
-function compose(country: CountryCode, national: string): string {
-	const digits = national.replace(/\D/g, "");
-	return digits ? `+${dialOf(country)}${digits}` : "";
-}
-
-// Splits a full number (e.g. from requestContact) back into country + national
-// part, keeping the current country when its code matches (+7 is KZ and RU).
-function split(value: string, current: CountryCode): { country: CountryCode; national: string } {
-	const digits = value.replace(/\D/g, "");
-	const currentDial = dialOf(current);
-	if (currentDial && digits.startsWith(currentDial)) {
-		return { country: current, national: digits.slice(currentDial.length) };
-	}
-	const match = [...COUNTRIES].sort((a, b) => b.dial.length - a.dial.length).find((c) => digits.startsWith(c.dial));
-	return match ? { country: match.code, national: digits.slice(match.dial.length) } : { country: OTHER, national: digits };
-}
+import type { InputHTMLAttributes, Ref } from "react";
+import { PHONE_COUNTRIES, dialOf, flagOf, type PhoneCountry } from "@/lib/phone";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { cn } from "@/lib/utils";
 
 interface Props {
-	label: string;
+	id: string;
+	country: PhoneCountry;
+	onCountryChange: (country: PhoneCountry) => void;
 	countryLabel: string;
-	otherLabel: string;
-	value: string;
-	error?: string;
-	onChange: (value: string) => void;
-	onBlur: () => void;
+	invalid?: boolean;
+	inputProps: InputHTMLAttributes<HTMLInputElement> & { ref?: Ref<HTMLInputElement> };
 }
 
-export function PhoneField({ label, countryLabel, otherLabel, value, error, onChange, onBlur }: Props) {
-	const [country, setCountry] = useState<CountryCode>("UZ");
-	const [national, setNational] = useState("");
-
-	useEffect(() => {
-		if (value === compose(country, national)) return;
-		const next = split(value, country);
-		setCountry(next.country);
-		setNational(next.national);
-	}, [value, country, national]);
-
-	const update = (nextCountry: CountryCode, nextNational: string) => {
-		setCountry(nextCountry);
-		setNational(nextNational);
-		onChange(compose(nextCountry, nextNational));
-	};
+// Country code and number in one box, like ithink.uz: [flag +998 | 90 123 45 67].
+// The caller formats the number.
+export function PhoneField({ id, country, onCountryChange, countryLabel, invalid, inputProps }: Props) {
+	const placeholder = PHONE_COUNTRIES.find((c) => c.code === country)!.placeholder;
 
 	return (
-		<label className="flex flex-col gap-2">
-			<span className="px-1 text-xs font-medium uppercase tracking-wide text-muted-foreground">{label}</span>
-			<div className="flex gap-2">
-				<div className="relative shrink-0">
-					<select
-						aria-label={countryLabel}
-						value={country}
-						onChange={(e) => update(e.target.value as CountryCode, national)}
-						className="h-full appearance-none rounded-2xl bg-card py-3 pl-4 pr-8 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-[color:var(--color-brand)]/40"
-					>
-						{COUNTRIES.map((c) => (
-							<option key={c.code} value={c.code}>
-								{c.code} +{c.dial}
-							</option>
-						))}
-						<option value={OTHER}>{otherLabel}</option>
-					</select>
-					<ChevronDown size={14} className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-				</div>
-				<input
-					type="tel"
-					inputMode="tel"
-					aria-label={label}
-					autoComplete={country === OTHER ? "tel" : "tel-national"}
-					placeholder={country === OTHER ? "+" : undefined}
-					value={national}
-					onChange={(e) => update(country, e.target.value)}
-					onBlur={onBlur}
-					className="min-w-0 flex-1 rounded-2xl bg-card px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-[color:var(--color-brand)]/40"
-				/>
-			</div>
-			{error ? <span className="px-1 text-xs text-red-400">{error}</span> : null}
-		</label>
+		<div
+			className={cn(
+				"flex w-full items-center rounded-2xl bg-card transition-shadow focus-within:ring-2 focus-within:ring-[color:var(--color-brand)]/40",
+				invalid && "ring-2 ring-red-500/50"
+			)}
+		>
+			<Select value={country} onValueChange={(value) => value && onCountryChange(value as PhoneCountry)}>
+				<SelectTrigger
+					aria-label={countryLabel}
+					className="h-auto gap-1.5 rounded-l-2xl rounded-r-none border-0 bg-transparent py-3 pl-4 pr-2 text-sm font-medium focus-visible:ring-0 data-[size=default]:h-auto dark:bg-transparent dark:hover:bg-transparent"
+				>
+					<SelectValue>
+						{(value: PhoneCountry) => (
+							<span className="flex items-center gap-1.5">
+								<span aria-hidden="true">{flagOf(value)}</span>+{dialOf(value)}
+							</span>
+						)}
+					</SelectValue>
+				</SelectTrigger>
+				<SelectContent alignItemWithTrigger={false} align="start" className="min-w-44 rounded-xl">
+					{PHONE_COUNTRIES.map((c) => (
+						<SelectItem key={c.code} value={c.code} className="py-2">
+							<span aria-hidden="true">{flagOf(c.code)}</span>
+							<span>{c.code}</span>
+							<span className="text-muted-foreground">+{c.dial}</span>
+						</SelectItem>
+					))}
+				</SelectContent>
+			</Select>
+			<span className="h-5 w-px shrink-0 bg-border" aria-hidden="true" />
+			<input
+				id={id}
+				type="tel"
+				inputMode="tel"
+				autoComplete="tel-national"
+				placeholder={placeholder}
+				{...inputProps}
+				className="min-w-0 flex-1 bg-transparent px-3 py-3 text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none"
+			/>
+		</div>
 	);
 }

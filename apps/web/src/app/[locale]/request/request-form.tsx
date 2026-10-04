@@ -1,388 +1,435 @@
-'use client';
+"use client";
 
-import { useEffect, useMemo, useState } from 'react';
-import { useForm, Controller, type UseFormRegisterReturn } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useLocale, useTranslations } from 'next-intl';
-import { CheckCircle2, Loader2, Phone } from 'lucide-react';
-import {
-  COMPANY_SIZES,
-  LeadInputSchema,
-  parseStartParam,
-  type LeadInput,
-  type LeadResponse,
-  type ServiceSlug,
-} from '@ithink/types';
-import { getWebApp, hapticError, hapticImpact, hapticSuccess } from '@/lib/telegram';
-import { IconSquare } from '@/components/icon-square';
-import { GroupedCard } from '@/components/grouped-card';
-import { cn } from '@/lib/utils';
-import { PhoneField } from './phone-field';
+import { useEffect, useId, useState } from "react";
+import { Controller, useForm, useWatch, type Control, type FieldErrors, type Resolver } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useLocale, useTranslations } from "next-intl";
+import { z } from "zod";
+import { Building2, CheckCircle2, Layers, Loader2, Phone, Plus, User, type LucideIcon } from "lucide-react";
+import { COMPANY_SIZES, CompanySizeSchema, SERVICE_SLUGS, parseStartParam, type LeadResponse, type Locale, type ServiceSlug } from "@ithink/types";
+import { getWebApp, hapticError, hapticImpact, hapticSuccess } from "@/lib/telegram";
+import { DEFAULT_PHONE_COUNTRY, PHONE_COUNTRIES, formatPhone, toE164, type PhoneCountry } from "@/lib/phone";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { cn } from "@/lib/utils";
+import { PhoneField } from "./phone-field";
 
 export interface ServiceOption {
-  slug: ServiceSlug;
-  title: string;
-  icon: string;
-  color: string;
+	slug: ServiceSlug;
+	title: string;
+	icon: string;
+	color: string;
 }
 
-type Step = 1 | 2 | 3 | 'done';
+// Messages are leadForm.errors keys, so the same codes work for client and server errors.
+const FormSchema = z.object({
+	service: z.enum(SERVICE_SLUGS, { errorMap: () => ({ message: "service" }) }),
+	name: z.string().trim().min(2, "name").max(80, "name"),
+	phone_country: z.string(),
+	phone: z.string(),
+	company_size: z.union([CompanySizeSchema, z.literal("")], { errorMap: () => ({ message: "company_size" }) }),
+	description: z.string().trim().max(2000, "description")
+});
+
+type FormValues = z.infer<typeof FormSchema>;
+
+const FIELDS = ["service", "name", "phone", "company_size", "description"] as const;
+type Field = (typeof FIELDS)[number];
+
+const schemaResolver = zodResolver(FormSchema);
+
+// The phone check needs the country, and an object-level refine would be skipped
+// whenever another field fails, so it runs here alongside the schema.
+const resolver: Resolver<FormValues> = async (values, context, options) => {
+	const result = await schemaResolver(values, context, options);
+	if (toE164(values.phone, values.phone_country as PhoneCountry)) return result;
+	const errors = { ...result.errors, phone: { type: "validate", message: "phone" } } as FieldErrors<FormValues>;
+	return { values: {}, errors };
+};
+
+const LABEL_CLASS = "px-1 text-xs font-medium uppercase tracking-wide text-muted-foreground";
+const INPUT_CLASS =
+	"w-full rounded-2xl bg-card px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-[color:var(--color-brand)]/40 aria-[invalid=true]:ring-2 aria-[invalid=true]:ring-red-500/50";
+const ICON_CLASS = "pointer-events-none absolute left-4 top-1/2 size-4 -translate-y-1/2 text-muted-foreground";
+
+type ServerError = "noTelegram" | "unavailable" | "generic";
+
+// Picks the country whose dial code starts the shared number, preferring the
+// current one (+7 is both KZ and RU).
+function countryOfNumber(digits: string, current: PhoneCountry): PhoneCountry {
+	const currentDial = PHONE_COUNTRIES.find((c) => c.code === current)!.dial;
+	if (digits.startsWith(currentDial)) return current;
+	return PHONE_COUNTRIES.find((c) => digits.startsWith(c.dial))?.code ?? current;
+}
 
 interface Props {
-  options: ServiceOption[];
-  preselected?: string;
+	options: ServiceOption[];
+	preselected?: string;
 }
 
 export function RequestForm({ options, preselected }: Props) {
-  const t = useTranslations('request');
-  const locale = useLocale() as LeadInput['locale'];
-  const initialService = options.find((o) => o.slug === preselected)?.slug;
+	const t = useTranslations("leadForm");
+	const locale = useLocale() as Locale;
+	const uid = useId();
+	const id = (field: string) => `${uid}-${field}`;
 
-  const {
-    control,
-    register,
-    handleSubmit,
-    watch,
-    setValue,
-    formState: { errors },
-  } = useForm<LeadInput>({
-    resolver: zodResolver(LeadInputSchema),
-    defaultValues: {
-      service: initialService,
-      description: '',
-      name: '',
-      phone: '',
-      company_size: undefined,
-      locale,
-    },
-    mode: 'onChange',
-  });
+	const [knownService, setKnownService] = useState(options.find((o) => o.slug === preselected)?.slug);
+	const [showComment, setShowComment] = useState(false);
+	const [canShareContact, setCanShareContact] = useState(false);
+	const [submitting, setSubmitting] = useState(false);
+	const [serverError, setServerError] = useState<ServerError | null>(null);
+	const [leadId, setLeadId] = useState<number | null>(null);
+	const [done, setDone] = useState(false);
 
-  const [step, setStep] = useState<Step>(initialService ? 2 : 1);
-  const [submitting, setSubmitting] = useState(false);
-  const [serverError, setServerError] = useState<string | null>(null);
-  const [leadId, setLeadId] = useState<number | null>(null);
-  const [canShareContact, setCanShareContact] = useState(false);
+	const {
+		control,
+		register,
+		handleSubmit,
+		setValue,
+		getValues,
+		setError,
+		formState: { errors }
+	} = useForm<FormValues>({
+		resolver,
+		// "" leaves a select on its placeholder; the schema rejects an empty service on submit.
+		defaultValues: {
+			service: knownService ?? ("" as ServiceSlug),
+			name: "",
+			phone_country: DEFAULT_PHONE_COUNTRY,
+			phone: "",
+			company_size: "",
+			description: ""
+		}
+	});
 
-  useEffect(() => {
-    const webApp = getWebApp();
-    setCanShareContact(Boolean(webApp?.requestContact && webApp.isVersionAtLeast('6.9')));
+	const phoneCountry = useWatch({ control, name: "phone_country" }) as PhoneCountry;
 
-    if (initialService) return;
-    const fromStartParam = parseStartParam(webApp?.initDataUnsafe.start_param)?.service;
-    if (fromStartParam && options.some((o) => o.slug === fromStartParam)) {
-      setValue('service', fromStartParam);
-      setStep(2);
-    }
-  }, [initialService, options, setValue]);
+	useEffect(() => {
+		const webApp = getWebApp();
+		setCanShareContact(Boolean(webApp?.requestContact && webApp.isVersionAtLeast("6.9")));
 
-  const shareContact = () => {
-    hapticImpact('light');
-    getWebApp()?.requestContact?.((shared, result) => {
-      const contact = result?.responseUnsafe?.contact;
-      if (!shared || !contact?.phone_number) return;
-      const digits = contact.phone_number.replace(/\D/g, '');
-      setValue('phone', `+${digits}`, { shouldValidate: true });
-      if (!watch('name')) {
-        const name = [contact.first_name, contact.last_name].filter(Boolean).join(' ');
-        if (name) setValue('name', name, { shouldValidate: true });
-      }
-    });
-  };
+		if (knownService) return;
+		const fromStartParam = parseStartParam(webApp?.initDataUnsafe.start_param)?.service;
+		if (fromStartParam && options.some((o) => o.slug === fromStartParam)) {
+			setValue("service", fromStartParam);
+			setKnownService(fromStartParam);
+		}
+	}, [knownService, options, setValue]);
 
-  const selectedService = watch('service');
-  const companySize = watch('company_size');
-  const privacyUrl = `https://ithink.uz/${locale}/privacy`;
-  const selectedOption = useMemo(
-    () => options.find((o) => o.slug === selectedService),
-    [options, selectedService],
-  );
+	const shareContact = () => {
+		hapticImpact("light");
+		getWebApp()?.requestContact?.((shared, result) => {
+			const contact = result?.responseUnsafe?.contact;
+			if (!shared || !contact?.phone_number) return;
+			const digits = contact.phone_number.replace(/\D/g, "");
+			const country = countryOfNumber(digits, getValues("phone_country") as PhoneCountry);
+			setValue("phone_country", country);
+			setValue("phone", formatPhone(`+${digits}`, country), { shouldValidate: true });
+			if (!getValues("name")) {
+				const name = [contact.first_name, contact.last_name].filter(Boolean).join(" ");
+				if (name) setValue("name", name, { shouldValidate: true });
+			}
+		});
+	};
 
-  const onSubmit = handleSubmit(async (data) => {
-    setSubmitting(true);
-    setServerError(null);
+	const onSubmit = handleSubmit(
+		async (values) => {
+			const initData = getWebApp()?.initData;
+			if (!initData) {
+				setServerError("noTelegram");
+				hapticError();
+				return;
+			}
 
-    const webApp = getWebApp();
-    const initData = webApp?.initData ?? '';
+			setSubmitting(true);
+			setServerError(null);
 
-    if (!initData) {
-      setServerError(t('errors.noTelegram'));
-      setSubmitting(false);
-      hapticError();
-      return;
-    }
+			let res: Response;
+			try {
+				res = await fetch("/api/lead", {
+					method: "POST",
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify({
+						service: values.service,
+						name: values.name.trim(),
+						phone: toE164(values.phone, values.phone_country as PhoneCountry),
+						company_size: values.company_size || undefined,
+						description: values.description.trim() || undefined,
+						// Tapping the button is the consent; the note under it says so.
+						consent: true,
+						locale,
+						initData
+					})
+				});
+			} catch {
+				setSubmitting(false);
+				setServerError("unavailable");
+				hapticError();
+				return;
+			}
 
-    try {
-      const res = await fetch('/api/lead', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...data, initData }),
-      });
+			setSubmitting(false);
+			if (res.ok) {
+				const body = (await res.json().catch(() => null)) as LeadResponse | null;
+				setLeadId(body?.leadId ?? null);
+				hapticSuccess();
+				setDone(true);
+				return;
+			}
 
-      if (!res.ok) {
-        const body = (await res.json().catch(() => null)) as { error?: string } | null;
-        setServerError(body?.error ?? t('errors.generic'));
-        hapticError();
-        setSubmitting(false);
-        return;
-      }
+			hapticError();
+			if (res.status === 400) {
+				const data = (await res.json().catch(() => null)) as {
+					issues?: { fieldErrors?: Record<string, string[] | undefined> };
+				} | null;
+				const fieldErrors = data?.issues?.fieldErrors ?? {};
+				const failed = FIELDS.filter((field) => fieldErrors[field]?.length);
+				failed.forEach((field) => setError(field, { message: field }));
+				if (!failed.length) setServerError("generic");
+			} else {
+				setServerError("unavailable");
+			}
+		},
+		() => hapticError()
+	);
 
-      const body = (await res.json().catch(() => null)) as LeadResponse | null;
-      setLeadId(body?.leadId ?? null);
-      hapticSuccess();
-      setStep('done');
-    } catch {
-      setServerError(t('errors.generic'));
-      hapticError();
-    } finally {
-      setSubmitting(false);
-    }
-  });
+	if (done) {
+		return (
+			<div className="flex flex-col items-center gap-4 rounded-3xl bg-card px-6 py-10 text-center">
+				<CheckCircle2 size={48} className="text-[color:var(--color-brand)]" />
+				<h2 className="text-lg font-semibold">{t("successTitle")}</h2>
+				{leadId ? <p className="text-sm font-medium">{t("successNumber", { id: leadId })}</p> : null}
+				<p className="text-sm text-muted-foreground">{t("successBody")}</p>
+				<button
+					type="button"
+					onClick={() => getWebApp()?.close()}
+					className="mt-2 rounded-full bg-[color:var(--color-brand)] px-6 py-3 text-sm font-semibold text-white"
+				>
+					{t("close")}
+				</button>
+			</div>
+		);
+	}
 
-  if (step === 'done') {
-    return (
-      <div className="flex flex-col items-center gap-4 rounded-3xl bg-card px-6 py-10 text-center">
-        <CheckCircle2 size={48} className="text-[color:var(--color-brand)]" />
-        <h2 className="text-lg font-semibold">{t('success.title')}</h2>
-        {leadId ? (
-          <p className="text-sm font-medium">{t('success.number', { id: leadId })}</p>
-        ) : null}
-        <p className="text-sm text-muted-foreground">{t('success.body')}</p>
-        <button
-          type="button"
-          onClick={() => getWebApp()?.close()}
-          className="mt-2 rounded-full bg-[color:var(--color-brand)] px-6 py-3 text-sm font-semibold text-white"
-        >
-          {t('success.close')}
-        </button>
-      </div>
-    );
-  }
+	const fieldError = (name: Field) => {
+		const message = errors[name]?.message;
+		return message ? (
+			<span id={id(`${name}-error`)} className="px-1 text-xs text-red-400">
+				{t(`errors.${message}`)}
+			</span>
+		) : null;
+	};
 
-  return (
-    <form onSubmit={onSubmit} className="flex flex-col gap-4">
-      <StepIndicator current={step} />
+	const a11y = (name: Field) => ({
+		"aria-invalid": errors[name] ? true : undefined,
+		"aria-describedby": errors[name] ? id(`${name}-error`) : undefined
+	});
 
-      {step === 1 ? (
-        <Controller
-          control={control}
-          name="service"
-          render={({ field }) => (
-            <GroupedCard>
-              {options.map((opt) => {
-                const active = field.value === opt.slug;
-                return (
-                  <button
-                    key={opt.slug}
-                    type="button"
-                    onClick={() => {
-                      hapticImpact('light');
-                      field.onChange(opt.slug);
-                      setStep(2);
-                    }}
-                    className={cn(
-                      'flex w-full items-center gap-3 px-4 py-3 text-left transition-colors active:bg-white/5',
-                      active && 'bg-white/5',
-                    )}
-                  >
-                    <IconSquare icon={opt.icon} color={opt.color} />
-                    <span className="flex-1 text-[0.9375rem] font-medium">{opt.title}</span>
-                    {active ? (
-                      <span className="text-[color:var(--color-brand)]">✓</span>
-                    ) : null}
-                  </button>
-                );
-              })}
-            </GroupedCard>
-          )}
-        />
-      ) : null}
+	const optional = <span className="normal-case tracking-normal"> ({t("optional")})</span>;
+	const phone = register("phone");
+	const privacyUrl = `https://ithink.uz/${locale}/privacy`;
+	const knownTitle = options.find((o) => o.slug === knownService)?.title;
 
-      {step === 2 ? (
-        <div className="flex flex-col gap-3">
-          {selectedOption ? (
-            <button
-              type="button"
-              onClick={() => setStep(1)}
-              className="flex items-center gap-3 rounded-2xl bg-card px-4 py-3 text-left"
-            >
-              <IconSquare icon={selectedOption.icon} color={selectedOption.color} />
-              <span className="flex-1 text-[0.9375rem] font-medium">{selectedOption.title}</span>
-              <span className="text-xs text-muted-foreground">{t('steps.service')}</span>
-            </button>
-          ) : null}
+	return (
+		<form onSubmit={onSubmit} noValidate className="flex flex-col gap-4">
+			{knownTitle ? <span className="self-start rounded-full bg-card px-3 py-1 text-xs font-medium text-muted-foreground">{knownTitle}</span> : null}
 
-          <label className="flex flex-col gap-2">
-            <span className="px-1 text-xs font-medium uppercase tracking-wide text-muted-foreground">
-              {t('fields.description')}
-            </span>
-            <textarea
-              {...register('description')}
-              rows={5}
-              placeholder={t('fields.descriptionPlaceholder')}
-              className="resize-none rounded-2xl bg-card px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-[color:var(--color-brand)]/40"
-            />
-          </label>
+			{canShareContact ? (
+				<button
+					type="button"
+					onClick={shareContact}
+					className="flex items-center justify-center gap-2 rounded-full bg-card px-6 py-3 text-sm font-semibold text-[color:var(--color-brand)]"
+				>
+					<Phone size={16} />
+					<span>{t("shareContact")}</span>
+				</button>
+			) : null}
 
-          <div className="flex flex-col gap-2">
-            <span className="px-1 text-xs font-medium uppercase tracking-wide text-muted-foreground">
-              {t('fields.companySize')}
-            </span>
-            <div className="flex flex-wrap gap-2">
-              {COMPANY_SIZES.map((size) => {
-                const active = companySize === size;
-                return (
-                  <button
-                    key={size}
-                    type="button"
-                    aria-pressed={active}
-                    onClick={() => {
-                      hapticImpact('light');
-                      setValue('company_size', active ? undefined : size);
-                    }}
-                    className={cn(
-                      'rounded-full bg-card px-4 py-2 text-sm transition-colors',
-                      active && 'bg-[color:var(--color-brand)] text-white',
-                    )}
-                  >
-                    {t(`companySize.${size}`)}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
+			<div className="flex flex-col gap-2">
+				<label htmlFor={id("name")} className={LABEL_CLASS}>
+					{t("nameLabel")}
+				</label>
+				<div className="relative">
+					<User className={ICON_CLASS} aria-hidden="true" />
+					<input
+						id={id("name")}
+						type="text"
+						autoComplete="name"
+						placeholder={t("namePlaceholder")}
+						{...register("name")}
+						{...a11y("name")}
+						className={cn(INPUT_CLASS, "pl-11")}
+					/>
+				</div>
+				{fieldError("name")}
+			</div>
 
-          <button
-            type="button"
-            onClick={() => {
-              hapticImpact('light');
-              setStep(3);
-            }}
-            className="mt-2 rounded-full bg-[color:var(--color-brand)] px-6 py-3 text-sm font-semibold text-white"
-          >
-            {t('steps.contact')} →
-          </button>
-        </div>
-      ) : null}
+			<div className="flex flex-col gap-2">
+				<label htmlFor={id("phone")} className={LABEL_CLASS}>
+					{t("phoneLabel")}
+				</label>
+				<PhoneField
+					id={id("phone")}
+					country={phoneCountry}
+					countryLabel={t("countryLabel")}
+					onCountryChange={(country) => {
+						setValue("phone_country", country);
+						setValue("phone", formatPhone(getValues("phone"), country));
+					}}
+					invalid={!!errors.phone}
+					inputProps={{
+						...phone,
+						...a11y("phone"),
+						onChange: (e) => {
+							e.target.value = formatPhone(e.target.value, phoneCountry);
+							return phone.onChange(e);
+						}
+					}}
+				/>
+				{fieldError("phone")}
+			</div>
 
-      {step === 3 ? (
-        <div className="flex flex-col gap-3">
-          {canShareContact ? (
-            <>
-              <button
-                type="button"
-                onClick={shareContact}
-                className="flex items-center justify-center gap-2 rounded-full bg-[color:var(--color-brand)] px-6 py-3 text-sm font-semibold text-white"
-              >
-                <Phone size={16} />
-                <span>{t('fields.shareContact')}</span>
-              </button>
-              <p className="text-center text-xs text-muted-foreground">{t('fields.orManual')}</p>
-            </>
-          ) : null}
-          <InputField
-            label={t('fields.name')}
-            error={errors.name?.message}
-            register={register('name')}
-            autoComplete="name"
-          />
-          <Controller
-            control={control}
-            name="phone"
-            render={({ field }) => (
-              <PhoneField
-                label={t('fields.phone')}
-                countryLabel={t('fields.country')}
-                otherLabel={t('fields.otherCountry')}
-                value={field.value}
-                error={errors.phone?.message}
-                onChange={field.onChange}
-                onBlur={field.onBlur}
-              />
-            )}
-          />
+			{!knownService ? (
+				<div className="flex flex-col gap-2">
+					<label htmlFor={id("service")} className={LABEL_CLASS}>
+						{t("serviceLabel")}
+					</label>
+					<FormSelect
+						control={control}
+						name="service"
+						id={id("service")}
+						icon={Layers}
+						placeholder={t("selectPlaceholder")}
+						items={options.map((o) => ({ value: o.slug, label: o.title }))}
+						{...a11y("service")}
+					/>
+					{fieldError("service")}
+				</div>
+			) : null}
 
-          {serverError ? (
-            <p className="px-1 text-sm text-red-400">{serverError}</p>
-          ) : null}
+			<div className="flex flex-col gap-2">
+				<label htmlFor={id("company_size")} className={LABEL_CLASS}>
+					{t("companySizeLabel")}
+					{optional}
+				</label>
+				<FormSelect
+					control={control}
+					name="company_size"
+					id={id("company_size")}
+					icon={Building2}
+					placeholder={t("selectPlaceholder")}
+					items={COMPANY_SIZES.map((size) => ({ value: size, label: t(`companySizes.${size}`) }))}
+				/>
+			</div>
 
-          <button
-            type="submit"
-            disabled={submitting}
-            className="mt-2 flex items-center justify-center gap-2 rounded-full bg-[color:var(--color-brand)] px-6 py-3 text-sm font-semibold text-white disabled:opacity-70"
-          >
-            {submitting ? (
-              <>
-                <Loader2 size={16} className="animate-spin" />
-                <span>{t('fields.submitting')}</span>
-              </>
-            ) : (
-              <span>{t('fields.submit')}</span>
-            )}
-          </button>
+			{showComment ? (
+				<div className="flex flex-col gap-2">
+					<label htmlFor={id("description")} className={LABEL_CLASS}>
+						{t("commentLabel")}
+						{optional}
+					</label>
+					<textarea
+						id={id("description")}
+						rows={3}
+						autoFocus
+						placeholder={t("commentPlaceholder")}
+						{...register("description")}
+						{...a11y("description")}
+						className={cn(INPUT_CLASS, "resize-none")}
+					/>
+					{fieldError("description")}
+				</div>
+			) : (
+				<button
+					type="button"
+					onClick={() => {
+						hapticImpact("light");
+						setShowComment(true);
+					}}
+					className="flex items-center gap-1.5 self-start px-1 text-sm font-medium text-[color:var(--color-brand)]"
+				>
+					<Plus size={16} />
+					{t("addComment")}
+				</button>
+			)}
 
-          <p className="px-1 text-center text-xs text-muted-foreground">
-            {t.rich('fields.privacy', {
-              link: (chunks) => (
-                <a
-                  href={privacyUrl}
-                  onClick={(event) => {
-                    const webApp = getWebApp();
-                    if (!webApp) return;
-                    event.preventDefault();
-                    webApp.openLink(privacyUrl);
-                  }}
-                  className="text-[color:var(--color-brand)] underline"
-                >
-                  {chunks}
-                </a>
-              ),
-            })}
-          </p>
-        </div>
-      ) : null}
-    </form>
-  );
+			{serverError ? (
+				<p role="alert" className="px-1 text-sm text-red-400">
+					{t(`errors.${serverError}`)}
+				</p>
+			) : null}
+
+			<button
+				type="submit"
+				disabled={submitting}
+				className="mt-2 flex items-center justify-center gap-2 rounded-full bg-[color:var(--color-brand)] px-6 py-3 text-sm font-semibold text-white disabled:opacity-70"
+			>
+				{submitting ? <Loader2 size={16} className="animate-spin" /> : null}
+				<span>{submitting ? t("sending") : t("submit")}</span>
+			</button>
+
+			<p className="px-1 text-center text-xs text-muted-foreground">
+				{t.rich("consentNote", {
+					link: (chunks) => (
+						<a
+							href={privacyUrl}
+							onClick={(event) => {
+								const webApp = getWebApp();
+								if (!webApp) return;
+								event.preventDefault();
+								webApp.openLink(privacyUrl);
+							}}
+							className="text-[color:var(--color-brand)] underline"
+						>
+							{chunks}
+						</a>
+					)
+				})}
+			</p>
+		</form>
+	);
 }
 
-function StepIndicator({ current }: { current: Step }) {
-  if (current === 'done') return null;
-  const steps: Step[] = [1, 2, 3];
-  return (
-    <div className="flex items-center gap-1.5 px-1">
-      {steps.map((s) => (
-        <span
-          key={String(s)}
-          className={cn(
-            'h-1 flex-1 rounded-full bg-white/10 transition-colors',
-            (current as number) >= (s as number) && 'bg-[color:var(--color-brand)]',
-          )}
-        />
-      ))}
-    </div>
-  );
+interface FormSelectProps {
+	control: Control<FormValues>;
+	name: "service" | "company_size";
+	id: string;
+	icon: LucideIcon;
+	placeholder: string;
+	items: { value: string; label: string }[];
+	"aria-invalid"?: boolean;
+	"aria-describedby"?: string;
 }
 
-interface InputFieldProps {
-  label: string;
-  error?: string;
-  register: UseFormRegisterReturn;
-  autoComplete?: string;
-}
-
-function InputField({ label, error, register, autoComplete }: InputFieldProps) {
-  return (
-    <label className="flex flex-col gap-2">
-      <span className="px-1 text-xs font-medium uppercase tracking-wide text-muted-foreground">
-        {label}
-      </span>
-      <input
-        {...register}
-        type="text"
-        autoComplete={autoComplete}
-        className="rounded-2xl bg-card px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-[color:var(--color-brand)]/40"
-      />
-      {error ? <span className="px-1 text-xs text-red-400">{error}</span> : null}
-    </label>
-  );
+function FormSelect({ control, name, id, icon: Icon, placeholder, items, ...aria }: FormSelectProps) {
+	return (
+		<Controller
+			control={control}
+			name={name}
+			render={({ field }) => (
+				<Select
+					value={field.value || null}
+					onValueChange={(value) => field.onChange(value ?? "")}
+					items={Object.fromEntries(items.map((item) => [item.value, item.label]))}
+				>
+					<SelectTrigger
+						id={id}
+						ref={field.ref}
+						onBlur={field.onBlur}
+						{...aria}
+						className="h-auto w-full gap-3 rounded-2xl border-0 bg-card px-4 py-3 text-sm text-foreground focus-visible:ring-2 focus-visible:ring-[color:var(--color-brand)]/40 aria-invalid:ring-2 aria-invalid:ring-red-500/50 data-[size=default]:h-auto dark:bg-card dark:hover:bg-card"
+					>
+						<Icon className="size-4 text-muted-foreground" aria-hidden="true" />
+						<SelectValue placeholder={placeholder} />
+					</SelectTrigger>
+					<SelectContent alignItemWithTrigger={false} className="rounded-xl">
+						{items.map((item) => (
+							<SelectItem key={item.value} value={item.value} className="py-2">
+								{item.label}
+							</SelectItem>
+						))}
+					</SelectContent>
+				</Select>
+			)}
+		/>
+	);
 }

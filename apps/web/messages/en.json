@@ -123,44 +123,7 @@
 	},
 	"request": {
 		"title": "Request",
-		"subtitle": "We reply within an hour",
-		"steps": {
-			"service": "Service",
-			"need": "Need",
-			"contact": "Contact"
-		},
-		"fields": {
-			"service": "Pick a service",
-			"description": "Comment (optional)",
-			"descriptionPlaceholder": "What needs to be done, timeline, budget if known",
-			"name": "Your name",
-			"phone": "Phone",
-			"submit": "Send request",
-			"submitting": "Sending...",
-			"shareContact": "Share contact",
-			"orManual": "or enter the number manually",
-			"companySize": "Company size (optional)",
-			"country": "Country",
-			"otherCountry": "Other",
-			"privacy": "By tapping the button, you agree to the <link>privacy policy</link>"
-		},
-		"success": {
-			"title": "Request sent",
-			"body": "We'll contact you within an hour.",
-			"close": "Close",
-			"number": "Request #{id}"
-		},
-		"errors": {
-			"generic": "Something went wrong. Please try again.",
-			"validation": "Check the form fields.",
-			"noTelegram": "Open this mini app from Telegram."
-		},
-		"companySize": {
-			"1_10": "1–10",
-			"11_50": "11–50",
-			"51_200": "51–200",
-			"200_plus": "200+"
-		}
+		"subtitle": "We reply within an hour"
 	},
 	"faq": {
 		"title": "FAQ",
@@ -210,6 +173,43 @@
 				"q": "Do you sign NDAs?",
 				"a": "Yes, always. We can use your template or provide ours."
 			}
+		}
+	},
+	"leadForm": {
+		"nameLabel": "Name",
+		"namePlaceholder": "Your name",
+		"phoneLabel": "Phone number",
+		"countryLabel": "Country code",
+		"serviceLabel": "Service",
+		"companySizeLabel": "Company size",
+		"commentLabel": "Comment",
+		"commentPlaceholder": "A few words about the task, if you like",
+		"addComment": "Add a comment",
+		"optional": "optional",
+		"selectPlaceholder": "Choose…",
+		"companySizes": {
+			"1_10": "1–10 employees",
+			"11_50": "11–50 employees",
+			"51_200": "51–200 employees",
+			"200_plus": "Over 200 employees"
+		},
+		"submit": "Get a free consultation",
+		"sending": "Sending…",
+		"consentNote": "By clicking the button, you agree to the processing of your data under the <link>privacy policy</link>.",
+		"shareContact": "Share contact",
+		"successTitle": "Request sent",
+		"successNumber": "Request #{id}",
+		"successBody": "We'll contact you within an hour.",
+		"close": "Close",
+		"errors": {
+			"service": "Choose a service",
+			"name": "Enter your name — 2 to 80 characters",
+			"phone": "Check the number for the selected country",
+			"company_size": "Choose a company size from the list",
+			"description": "Comment — up to 2000 characters",
+			"unavailable": "Your request didn't go through. Your details are still in the form — try again or message us on Telegram.",
+			"generic": "Something went wrong. Check the fields and try again.",
+			"noTelegram": "Open this mini app from Telegram."
 		}
 	}
 }

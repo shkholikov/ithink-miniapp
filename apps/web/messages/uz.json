@@ -123,44 +123,7 @@
 	},
 	"request": {
 		"title": "Ariza qoldirish",
-		"subtitle": "Bir soat ichida javob beramiz",
-		"steps": {
-			"service": "Xizmat",
-			"need": "Vazifa",
-			"contact": "Aloqa"
-		},
-		"fields": {
-			"service": "Xizmatni tanlang",
-			"description": "Izoh (ixtiyoriy)",
-			"descriptionPlaceholder": "Nima qilish kerak, muddatlar, byudjet — agar maʼlum boʻlsa",
-			"name": "Ismingiz",
-			"phone": "Telefon",
-			"submit": "Yuborish",
-			"submitting": "Yuborilmoqda...",
-			"shareContact": "Kontaktni ulashish",
-			"orManual": "yoki raqamni qoʻlda kiriting",
-			"companySize": "Kompaniyadagi xodimlar soni (ixtiyoriy)",
-			"country": "Davlat",
-			"otherCountry": "Boshqa",
-			"privacy": "Tugmani bosish orqali siz <link>maxfiylik siyosati</link>ga rozilik bildirasiz"
-		},
-		"success": {
-			"title": "Ariza yuborildi",
-			"body": "Bir soat ichida siz bilan bogʻlanamiz.",
-			"close": "Yopish",
-			"number": "Ariza №{id}"
-		},
-		"errors": {
-			"generic": "Xatolik yuz berdi. Qayta urinib koʻring.",
-			"validation": "Toʻldirilgan maydonlarni tekshiring.",
-			"noTelegram": "Mini-ilovani Telegramdan oching."
-		},
-		"companySize": {
-			"1_10": "1–10",
-			"11_50": "11–50",
-			"51_200": "51–200",
-			"200_plus": "200+"
-		}
+		"subtitle": "Bir soat ichida javob beramiz"
 	},
 	"faq": {
 		"title": "FAQ",
@@ -210,6 +173,43 @@
 				"q": "NDA imzolaysizmi?",
 				"a": "Ha, har doim. Sizning shabloningiz yoki bizning."
 			}
+		}
+	},
+	"leadForm": {
+		"nameLabel": "Ism",
+		"namePlaceholder": "Ismingiz",
+		"phoneLabel": "Telefon raqami",
+		"countryLabel": "Mamlakat kodi",
+		"serviceLabel": "Xizmat",
+		"companySizeLabel": "Kompaniya hajmi",
+		"commentLabel": "Izoh",
+		"commentPlaceholder": "Xohlasangiz, vazifa haqida qisqacha",
+		"addComment": "Izoh qoʻshish",
+		"optional": "ixtiyoriy",
+		"selectPlaceholder": "Tanlang…",
+		"companySizes": {
+			"1_10": "1–10 xodim",
+			"11_50": "11–50 xodim",
+			"51_200": "51–200 xodim",
+			"200_plus": "200 dan ortiq xodim"
+		},
+		"submit": "Bepul konsultatsiya olish",
+		"sending": "Yuborilmoqda…",
+		"consentNote": "Tugmani bosish orqali siz <link>maxfiylik siyosatiga</link> muvofiq maʼlumotlaringizni qayta ishlashga rozilik bildirasiz.",
+		"shareContact": "Kontaktni ulashish",
+		"successTitle": "Ariza yuborildi",
+		"successNumber": "Ariza №{id}",
+		"successBody": "Bir soat ichida siz bilan bogʻlanamiz.",
+		"close": "Yopish",
+		"errors": {
+			"service": "Xizmatni tanlang",
+			"name": "Ismingizni kiriting — 2 dan 80 belgigacha",
+			"phone": "Tanlangan mamlakat uchun raqamni tekshiring",
+			"company_size": "Roʻyxatdan kompaniya hajmini tanlang",
+			"description": "Izoh — 2000 belgidan oshmasin",
+			"unavailable": "Arizani yuborib boʻlmadi. Maʼlumotlaringiz shaklda qoldi — qayta urinib koʻring yoki bizga Telegramda yozing.",
+			"generic": "Nimadir xato ketdi. Maydonlarni tekshirib, qayta urinib koʻring.",
+			"noTelegram": "Mini-ilovani Telegramdan oching."
 		}
 	}
 }
