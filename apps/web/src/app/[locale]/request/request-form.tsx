@@ -1,11 +1,18 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useForm, Controller, type UseFormRegisterReturn } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useLocale, useTranslations } from 'next-intl';
-import { CheckCircle2, Loader2 } from 'lucide-react';
-import { LeadInputSchema, type LeadInput, type ServiceSlug } from '@ithink/types';
+import { CheckCircle2, Loader2, Phone } from 'lucide-react';
+import {
+  BUDGET_RANGES,
+  LeadInputSchema,
+  parseStartParam,
+  type LeadInput,
+  type LeadResponse,
+  type ServiceSlug,
+} from '@ithink/types';
 import { getWebApp, hapticError, hapticImpact, hapticSuccess } from '@/lib/telegram';
 import { IconSquare } from '@/components/icon-square';
 import { GroupedCard } from '@/components/grouped-card';
@@ -19,6 +26,8 @@ export interface ServiceOption {
 }
 
 type Step = 1 | 2 | 3 | 'done';
+
+const PRIVACY_URL = process.env.NEXT_PUBLIC_PRIVACY_URL;
 
 interface Props {
   options: ServiceOption[];
@@ -45,6 +54,7 @@ export function RequestForm({ options, preselected }: Props) {
       name: '',
       phone: '',
       email: undefined,
+      budget: undefined,
       locale,
     },
     mode: 'onChange',
@@ -53,9 +63,37 @@ export function RequestForm({ options, preselected }: Props) {
   const [step, setStep] = useState<Step>(initialService ? 2 : 1);
   const [submitting, setSubmitting] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
+  const [leadId, setLeadId] = useState<number | null>(null);
+  const [canShareContact, setCanShareContact] = useState(false);
+
+  useEffect(() => {
+    const webApp = getWebApp();
+    setCanShareContact(Boolean(webApp?.requestContact && webApp.isVersionAtLeast('6.9')));
+
+    if (initialService) return;
+    const fromStartParam = parseStartParam(webApp?.initDataUnsafe.start_param)?.service;
+    if (fromStartParam && options.some((o) => o.slug === fromStartParam)) {
+      setValue('service', fromStartParam);
+      setStep(2);
+    }
+  }, [initialService, options, setValue]);
+
+  const shareContact = () => {
+    hapticImpact('light');
+    getWebApp()?.requestContact?.((shared, result) => {
+      const contact = result?.responseUnsafe?.contact;
+      if (!shared || !contact?.phone_number) return;
+      setValue('phone', contact.phone_number, { shouldValidate: true });
+      if (!watch('name')) {
+        const name = [contact.first_name, contact.last_name].filter(Boolean).join(' ');
+        if (name) setValue('name', name, { shouldValidate: true });
+      }
+    });
+  };
 
   const selectedService = watch('service');
   const description = watch('description');
+  const budget = watch('budget');
   const selectedOption = useMemo(
     () => options.find((o) => o.slug === selectedService),
     [options, selectedService],
@@ -90,6 +128,8 @@ export function RequestForm({ options, preselected }: Props) {
         return;
       }
 
+      const body = (await res.json().catch(() => null)) as LeadResponse | null;
+      setLeadId(body?.leadId ?? null);
       hapticSuccess();
       setStep('done');
     } catch {
@@ -105,6 +145,9 @@ export function RequestForm({ options, preselected }: Props) {
       <div className="flex flex-col items-center gap-4 rounded-3xl bg-card px-6 py-10 text-center">
         <CheckCircle2 size={48} className="text-[color:var(--color-brand)]" />
         <h2 className="text-lg font-semibold">{t('success.title')}</h2>
+        {leadId ? (
+          <p className="text-sm font-medium">{t('success.number', { id: leadId })}</p>
+        ) : null}
         <p className="text-sm text-muted-foreground">{t('success.body')}</p>
         <button
           type="button"
@@ -185,6 +228,34 @@ export function RequestForm({ options, preselected }: Props) {
             ) : null}
           </label>
 
+          <div className="flex flex-col gap-2">
+            <span className="px-1 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+              {t('fields.budget')}
+            </span>
+            <div className="flex flex-wrap gap-2">
+              {BUDGET_RANGES.map((range) => {
+                const active = budget === range;
+                return (
+                  <button
+                    key={range}
+                    type="button"
+                    aria-pressed={active}
+                    onClick={() => {
+                      hapticImpact('light');
+                      setValue('budget', active ? undefined : range);
+                    }}
+                    className={cn(
+                      'rounded-full bg-card px-4 py-2 text-sm transition-colors',
+                      active && 'bg-[color:var(--color-brand)] text-white',
+                    )}
+                  >
+                    {t(`budget.${range}`)}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
           <button
             type="button"
             onClick={() => {
@@ -205,6 +276,19 @@ export function RequestForm({ options, preselected }: Props) {
 
       {step === 3 ? (
         <div className="flex flex-col gap-3">
+          {canShareContact ? (
+            <>
+              <button
+                type="button"
+                onClick={shareContact}
+                className="flex items-center justify-center gap-2 rounded-full bg-[color:var(--color-brand)] px-6 py-3 text-sm font-semibold text-white"
+              >
+                <Phone size={16} />
+                <span>{t('fields.shareContact')}</span>
+              </button>
+              <p className="text-center text-xs text-muted-foreground">{t('fields.orManual')}</p>
+            </>
+          ) : null}
           <InputField
             label={t('fields.name')}
             error={errors.name?.message}
@@ -226,6 +310,38 @@ export function RequestForm({ options, preselected }: Props) {
             autoComplete="email"
             type="email"
           />
+
+          <label className="flex items-start gap-3 px-1">
+            <input
+              type="checkbox"
+              {...register('consent')}
+              className="mt-0.5 size-4 shrink-0 accent-[color:var(--color-brand)]"
+            />
+            <span className="text-xs text-muted-foreground">
+              {t.rich('fields.consent', {
+                link: (chunks) =>
+                  PRIVACY_URL ? (
+                    <a
+                      href={PRIVACY_URL}
+                      onClick={(event) => {
+                        const webApp = getWebApp();
+                        if (!webApp) return;
+                        event.preventDefault();
+                        webApp.openLink(PRIVACY_URL);
+                      }}
+                      className="text-[color:var(--color-brand)] underline"
+                    >
+                      {chunks}
+                    </a>
+                  ) : (
+                    chunks
+                  ),
+              })}
+            </span>
+          </label>
+          {errors.consent ? (
+            <span className="px-1 text-xs text-red-400">{t('errors.consent')}</span>
+          ) : null}
 
           {serverError ? (
             <p className="px-1 text-sm text-red-400">{serverError}</p>

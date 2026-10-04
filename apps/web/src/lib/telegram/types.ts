@@ -24,6 +24,13 @@ export interface InitDataUnsafe {
   start_param?: string;
 }
 
+export interface RequestContactResult {
+  status?: 'sent' | 'cancelled';
+  responseUnsafe?: {
+    contact?: { phone_number?: string; first_name?: string; last_name?: string };
+  };
+}
+
 export interface TelegramWebApp {
   initData: string;
   initDataUnsafe: InitDataUnsafe;
@@ -41,6 +48,8 @@ export interface TelegramWebApp {
   offEvent(event: string, cb: () => void): void;
   openLink(url: string, options?: { try_instant_view?: boolean }): void;
   openTelegramLink(url: string): void;
+  isVersionAtLeast(version: string): boolean;
+  requestContact?(callback?: (shared: boolean, result?: RequestContactResult) => void): void;
 }
 
 declare global {

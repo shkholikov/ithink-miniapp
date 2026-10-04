@@ -137,17 +137,30 @@
 			"phone": "Telefon",
 			"email": "Email (ixtiyoriy)",
 			"submit": "Yuborish",
-			"submitting": "Yuborilmoqda..."
+			"submitting": "Yuborilmoqda...",
+			"budget": "Byudjet (ixtiyoriy)",
+			"shareContact": "Kontaktni ulashish",
+			"orManual": "yoki raqamni qoʻlda kiriting",
+			"consent": "<link>Maxfiylik siyosati</link>ga muvofiq shaxsiy maʼlumotlarimni qayta ishlashga roziman"
 		},
 		"success": {
 			"title": "Ariza yuborildi",
 			"body": "Bir soat ichida siz bilan bogʻlanamiz.",
-			"close": "Yopish"
+			"close": "Yopish",
+			"number": "Ariza №{id}"
 		},
 		"errors": {
 			"generic": "Xatolik yuz berdi. Qayta urinib koʻring.",
 			"validation": "Toʻldirilgan maydonlarni tekshiring.",
-			"noTelegram": "Mini-ilovani Telegramdan oching."
+			"noTelegram": "Mini-ilovani Telegramdan oching.",
+			"consent": "Maʼlumotlarni qayta ishlashga rozilikni tasdiqlang."
+		},
+		"budget": {
+			"lt_1k": "$1 000 gacha",
+			"1k_5k": "$1 000–5 000",
+			"5k_15k": "$5 000–15 000",
+			"gt_15k": "$15 000 dan ortiq",
+			"unknown": "Hozircha bilmayman"
 		}
 	},
 	"faq": {

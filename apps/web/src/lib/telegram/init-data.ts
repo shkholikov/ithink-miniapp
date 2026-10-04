@@ -12,6 +12,7 @@ export interface VerifyInitDataResult {
     languageCode?: string;
   };
   authDate?: number;
+  startParam?: string;
   error?: 'missing' | 'invalid-hash' | 'expired' | 'malformed';
 }
 
@@ -71,7 +72,7 @@ export function verifyInitData(initData: string, botToken: string): VerifyInitDa
     }
   }
 
-  return { ok: true, user, authDate };
+  return { ok: true, user, authDate, startParam: params.get('start_param') ?? undefined };
 }
 
 function timingSafeEqualHex(a: string, b: string): boolean {

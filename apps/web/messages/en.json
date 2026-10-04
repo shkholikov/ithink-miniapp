@@ -137,17 +137,30 @@
 			"phone": "Phone",
 			"email": "Email (optional)",
 			"submit": "Send request",
-			"submitting": "Sending..."
+			"submitting": "Sending...",
+			"budget": "Budget (optional)",
+			"shareContact": "Share contact",
+			"orManual": "or enter the number manually",
+			"consent": "I agree to the processing of my personal data under the <link>privacy policy</link>"
 		},
 		"success": {
 			"title": "Request sent",
 			"body": "We'll contact you within an hour.",
-			"close": "Close"
+			"close": "Close",
+			"number": "Request #{id}"
 		},
 		"errors": {
 			"generic": "Something went wrong. Please try again.",
 			"validation": "Check the form fields.",
-			"noTelegram": "Open this mini app from Telegram."
+			"noTelegram": "Open this mini app from Telegram.",
+			"consent": "Please confirm your consent to data processing."
+		},
+		"budget": {
+			"lt_1k": "under $1,000",
+			"1k_5k": "$1,000–5,000",
+			"5k_15k": "$5,000–15,000",
+			"gt_15k": "over $15,000",
+			"unknown": "Not sure yet"
 		}
 	},
 	"faq": {
