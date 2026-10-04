@@ -1,17 +1,17 @@
 # CLAUDE.md — ithink-miniapp
 
-Telegram Mini App for **ithink.uz** (B2B IT services company, Tashkent). Runs inside `@ithinkuzbot`. Purpose: lead generation for prospects.
+Telegram Mini App for **ithink.uz** (B2B IT services company, Tashkent). Runs inside `@ithinkuzbot`. Purpose: lead generation for prospects. Also the single lead intake for the ithink.uz website (`/api/site-lead`).
 
 ## Monorepo
 
 - **Manager:** pnpm + Turborepo
 - **Structure:**
   - `apps/web` — Next.js 16 Mini App
-  - `apps/bot` — grammY bot
+  - `apps/bot` — grammY bot (planned, not built yet)
   - `packages/config` — shared tsconfig, eslint, tailwind preset (brand tokens)
   - `packages/types` — zod schemas doubling as TS types
   - `packages/content` — typed service catalog, cases, FAQ
-  - `packages/amocrm` — amoCRM REST client (stubbed in phase 1)
+  - `packages/amocrm` — live amoCRM client + shared lead service (Jest tests: `pnpm --filter @ithink/amocrm test`)
 
 ## Phase 1 scope (keep tight)
 
@@ -19,7 +19,24 @@ Telegram Mini App for **ithink.uz** (B2B IT services company, Tashkent). Runs in
 - Target user: **prospects** (new leads), not existing clients
 - **No database.** Content lives in `packages/content`. Leads go to amoCRM. Session is in-memory.
 - **No admin panel** — phase 2.
-- **amoCRM is stubbed** — `/api/lead` validates initData, logs payload via pino, returns fake `leadId`. Real API integration lands when credentials are provided.
+
+## Lead intake
+
+- Two endpoints, one service (`createLeadService` in `packages/amocrm/src/lead-service.ts`):
+  - `POST /api/lead` — Mini App. HMAC-verified initData; `tg_user_id`, `tg_username`, `start_param` come only from the verified initData. `start_param` `<source>_<campaign>` maps to `utm_source` / `utm_campaign`.
+  - `POST /api/site-lead` — ithink.uz. CORS allowlist (`SITE_ORIGINS`), honeypot `website`, in-memory rate limit 5/10 min per IP, Turnstile checked only when `TURNSTILE_SECRET_KEY` is set.
+- Payload schemas live in `packages/types/src/lead.ts` and are a contract shared with ithink-web: change them together with the site's form.
+- Flow: dedupe contact by phone (full digits; bare 9 digits get `998`), append note + task to an open lead in pipeline 6434662, else create the lead in status 72345034 with note and "Связаться" task. If amoCRM fails, the lead goes to `SALES_FALLBACK_CHAT_ID` via the bot; the user still sees success.
+- Field ids for Продукт / Канал / Бюджет / Размер компании come from env (`AMOCRM_CF_*` + `*_ENUMS` JSON); a field is skipped until both are set.
+- Logs carry lead id, service, channel, outcome only — names, phones, emails and comments stay out of logs.
+- Every live submission creates a real amoCRM deal. Test against the stub (dev without `AMOCRM_ACCESS_TOKEN`) and mocked `fetch`; a live test needs the user's OK each time.
+- Production requires `AMOCRM_SUBDOMAIN`, `AMOCRM_ACCESS_TOKEN`, `TELEGRAM_BOT_TOKEN`: the Vercel production build fails without them (`next.config.ts`), and a non-Vercel server exits at startup (`instrumentation.ts`).
+- Turborepo strict env mode hides undeclared vars from the build: a new build-time env var goes into `turbo.json` `tasks.build.env`.
+
+## Deploy
+
+- Vercel project `ithink-miniapp-web`, domain `miniapp.ithink.uz`. A push to `main` deploys production.
+- Deploy the endpoint before ithink-web when the lead contract changes.
 
 ## Design rules
 
@@ -40,6 +57,7 @@ Telegram Mini App for **ithink.uz** (B2B IT services company, Tashkent). Runs in
 - **HMAC-validate `initData`** on every `/api/*` route that accepts user input. Reject if invalid or `auth_date` older than 1 hour.
 - Theme: sync `WebApp.colorScheme` → `next-themes`. Default dark.
 - Haptics on meaningful interactions (`impactOccurred('light')` on tab change, `notificationOccurred('success')` on lead submit).
+- The request form mirrors the ithink.uz lead form (`components/ui/lead-form.tsx` in ithink-web): same fields, phone helpers (`src/lib/phone.ts`) and shadcn Select (`src/components/ui/select.tsx`, base-ui). The phone comes from `requestContact` only when the user taps "Поделиться контактом".
 - Use `BackButton` for sub-pages, `MainButton` for primary CTAs on `/request` and `/services/[slug]`.
 
 ## Bot (`@ithinkuzbot`)
@@ -52,6 +70,7 @@ Telegram Mini App for **ithink.uz** (B2B IT services company, Tashkent). Runs in
 
 - Languages: `uz`, `ru`, `en`. Default: `ru`.
 - First-visit auto-select: read `WebApp.initDataUnsafe.user.language_code`; fall back to `ru` if no match.
+- `uz`, `ru`, `en` message files keep identical key sets — next-intl shows the raw key path for a missing key. Diff the flattened key sets after every change. Form copy lives in the `leadForm` namespace, mirroring ithink-web's.
 - `apps/web` uses `next-intl`; `apps/bot` uses grammY i18n plugin (Fluent `.ftl` files).
 
 ## Code style (from global CLAUDE.md)
@@ -71,8 +90,7 @@ Telegram Mini App for **ithink.uz** (B2B IT services company, Tashkent). Runs in
 
 - Don't add Postgres, Redis, BullMQ, or any queue
 - Don't build `packages/ui` (one consumer is not enough)
-- Don't wire real amoCRM API — keep it stubbed until credentials land
-- Don't implement amoCRM OAuth refresh
+- Don't implement amoCRM OAuth refresh — the "ITHINK LEADS" integration uses a long-lived token
 - Don't create a new Telegram bot — reuse `@ithinkuzbot`
 - Don't invent new brand colors — everything comes from ithink-web
 
