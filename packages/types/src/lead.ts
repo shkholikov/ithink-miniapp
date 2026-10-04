@@ -84,7 +84,8 @@ export const SiteLeadSubmissionSchema = LeadInputSchema.extend({
 	page_url: z.string().trim().url().max(2000),
 	attribution: AttributionSchema.optional(),
 	event_id: z.string().uuid().optional(),
-	turnstile_token: z.string().min(1, "missing turnstile token").max(4096),
+	// Optional while the site runs without a captcha; required once TURNSTILE_SECRET_KEY is set.
+	turnstile_token: z.string().max(4096).optional(),
 	website: z.string().optional()
 });
 

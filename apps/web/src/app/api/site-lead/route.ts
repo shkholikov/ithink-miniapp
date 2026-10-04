@@ -71,14 +71,11 @@ export async function POST(request: Request) {
 
 	const secret = process.env.TURNSTILE_SECRET_KEY;
 	if (secret) {
-		if (!(await verifyTurnstile(turnstile_token, secret, ip === "unknown" ? undefined : ip))) {
+		if (!turnstile_token || !(await verifyTurnstile(turnstile_token, secret, ip === "unknown" ? undefined : ip))) {
 			return reply({ error: "captcha failed" }, 403);
 		}
-	} else if (process.env.NODE_ENV === "production") {
-		logger.error("TURNSTILE_SECRET_KEY is not set, site leads are disabled");
-		return reply({ error: "site leads are not enabled" }, 503);
 	} else {
-		logger.warn("TURNSTILE_SECRET_KEY is not set, skipping captcha check outside production");
+		logger.warn("TURNSTILE_SECRET_KEY is not set, accepting site lead without a captcha check");
 	}
 
 	try {
