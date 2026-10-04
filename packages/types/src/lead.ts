@@ -28,11 +28,15 @@ const telegramSchema = z
 	])
 	.optional();
 
-const descriptionSchema = z.string().trim().min(10, "description too short").max(2000, "description too long");
+const descriptionSchema = z.union([z.string().trim().max(2000, "description too long"), z.literal("")]).optional();
 
 export const BUDGET_RANGES = ["lt_1k", "1k_5k", "5k_15k", "gt_15k", "unknown"] as const;
 export const BudgetRangeSchema = z.enum(BUDGET_RANGES);
 export type BudgetRange = z.infer<typeof BudgetRangeSchema>;
+
+export const COMPANY_SIZES = ["1_10", "11_50", "51_200", "200_plus"] as const;
+export const CompanySizeSchema = z.enum(COMPANY_SIZES);
+export type CompanySize = z.infer<typeof CompanySizeSchema>;
 
 export const LEAD_CHANNELS = ["site", "telegram_miniapp"] as const;
 export type LeadChannel = (typeof LEAD_CHANNELS)[number];
@@ -45,7 +49,10 @@ export const LeadInputSchema = z.object({
 	email: emailSchema,
 	telegram: telegramSchema,
 	budget: BudgetRangeSchema.optional(),
-	consent: z.literal(true, { errorMap: () => ({ message: "consent required" }) }),
+	company_size: CompanySizeSchema.optional(),
+	// Consent is given by submitting (privacy notice under the button); older
+	// clients may still send the checkbox value.
+	consent: z.boolean().optional(),
 	locale: LocaleSchema
 });
 

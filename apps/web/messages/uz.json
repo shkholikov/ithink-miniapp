@@ -131,17 +131,18 @@
 		},
 		"fields": {
 			"service": "Xizmatni tanlang",
-			"description": "Vazifani taʼriflang",
+			"description": "Izoh (ixtiyoriy)",
 			"descriptionPlaceholder": "Nima qilish kerak, muddatlar, byudjet — agar maʼlum boʻlsa",
 			"name": "Ismingiz",
 			"phone": "Telefon",
-			"email": "Email (ixtiyoriy)",
 			"submit": "Yuborish",
 			"submitting": "Yuborilmoqda...",
-			"budget": "Byudjet (ixtiyoriy)",
 			"shareContact": "Kontaktni ulashish",
 			"orManual": "yoki raqamni qoʻlda kiriting",
-			"consent": "<link>Maxfiylik siyosati</link>ga muvofiq shaxsiy maʼlumotlarimni qayta ishlashga roziman"
+			"companySize": "Kompaniyadagi xodimlar soni (ixtiyoriy)",
+			"country": "Davlat",
+			"otherCountry": "Boshqa",
+			"privacy": "Tugmani bosish orqali siz <link>maxfiylik siyosati</link>ga rozilik bildirasiz"
 		},
 		"success": {
 			"title": "Ariza yuborildi",
@@ -152,15 +153,13 @@
 		"errors": {
 			"generic": "Xatolik yuz berdi. Qayta urinib koʻring.",
 			"validation": "Toʻldirilgan maydonlarni tekshiring.",
-			"noTelegram": "Mini-ilovani Telegramdan oching.",
-			"consent": "Maʼlumotlarni qayta ishlashga rozilikni tasdiqlang."
+			"noTelegram": "Mini-ilovani Telegramdan oching."
 		},
-		"budget": {
-			"lt_1k": "$1 000 gacha",
-			"1k_5k": "$1 000–5 000",
-			"5k_15k": "$5 000–15 000",
-			"gt_15k": "$15 000 dan ortiq",
-			"unknown": "Hozircha bilmayman"
+		"companySize": {
+			"1_10": "1–10",
+			"11_50": "11–50",
+			"51_200": "51–200",
+			"200_plus": "200+"
 		}
 	},
 	"faq": {

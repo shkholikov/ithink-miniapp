@@ -31,7 +31,8 @@ export const LeadPipelineConfigSchema = z.object({
 	responsibleUserId: id.optional(),
 	product: EnumFieldSchema.optional(),
 	channel: EnumFieldSchema.optional(),
-	budget: EnumFieldSchema.optional()
+	budget: EnumFieldSchema.optional(),
+	companySize: EnumFieldSchema.optional()
 });
 
 export type LeadPipelineConfig = z.infer<typeof LeadPipelineConfigSchema>;
@@ -51,7 +52,9 @@ export const AmoEnvSchema = z.object({
 	AMOCRM_CF_CHANNEL_ID: optionalId,
 	AMOCRM_CHANNEL_ENUMS: enumMap,
 	AMOCRM_CF_BUDGET_ID: optionalId,
-	AMOCRM_BUDGET_ENUMS: enumMap
+	AMOCRM_BUDGET_ENUMS: enumMap,
+	AMOCRM_CF_COMPANY_SIZE_ID: optionalId,
+	AMOCRM_COMPANY_SIZE_ENUMS: enumMap
 });
 
 export function parseAmoEnv(env: Record<string, string | undefined>): {
@@ -71,7 +74,8 @@ export function parseAmoEnv(env: Record<string, string | undefined>): {
 			responsibleUserId: e.AMOCRM_RESPONSIBLE_USER_ID,
 			product: enumField(e.AMOCRM_CF_PRODUCT_ID, e.AMOCRM_PRODUCT_ENUMS),
 			channel: enumField(e.AMOCRM_CF_CHANNEL_ID, e.AMOCRM_CHANNEL_ENUMS),
-			budget: enumField(e.AMOCRM_CF_BUDGET_ID, e.AMOCRM_BUDGET_ENUMS)
+			budget: enumField(e.AMOCRM_CF_BUDGET_ID, e.AMOCRM_BUDGET_ENUMS),
+			companySize: enumField(e.AMOCRM_CF_COMPANY_SIZE_ID, e.AMOCRM_COMPANY_SIZE_ENUMS)
 		}
 	};
 }

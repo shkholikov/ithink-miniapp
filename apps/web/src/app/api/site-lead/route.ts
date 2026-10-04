@@ -67,7 +67,7 @@ export async function POST(request: Request) {
 		return reply({ error: "validation", issues: parsed.error.flatten() }, 400);
 	}
 
-	const { turnstile_token, website: _website, consent: _consent, event_id: _eventId, page_url, ...input } = parsed.data;
+	const { turnstile_token, website: _website, consent: _consent, event_id: _eventId, page_url, company_size, ...input } = parsed.data;
 
 	const secret = process.env.TURNSTILE_SECRET_KEY;
 	if (secret) {
@@ -83,7 +83,14 @@ export async function POST(request: Request) {
 
 	try {
 		const result = await getLeadService().createLead(
-			{ ...input, email: input.email || undefined, telegram: input.telegram || undefined, pageUrl: page_url },
+			{
+				...input,
+				email: input.email || undefined,
+				telegram: input.telegram || undefined,
+				description: input.description || undefined,
+				companySize: company_size,
+				pageUrl: page_url
+			},
 			"site"
 		);
 		return reply({ ok: true, leadId: result.leadId });

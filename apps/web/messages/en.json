@@ -131,17 +131,18 @@
 		},
 		"fields": {
 			"service": "Pick a service",
-			"description": "Describe your need",
+			"description": "Comment (optional)",
 			"descriptionPlaceholder": "What needs to be done, timeline, budget if known",
 			"name": "Your name",
 			"phone": "Phone",
-			"email": "Email (optional)",
 			"submit": "Send request",
 			"submitting": "Sending...",
-			"budget": "Budget (optional)",
 			"shareContact": "Share contact",
 			"orManual": "or enter the number manually",
-			"consent": "I agree to the processing of my personal data under the <link>privacy policy</link>"
+			"companySize": "Company size (optional)",
+			"country": "Country",
+			"otherCountry": "Other",
+			"privacy": "By tapping the button, you agree to the <link>privacy policy</link>"
 		},
 		"success": {
 			"title": "Request sent",
@@ -152,15 +153,13 @@
 		"errors": {
 			"generic": "Something went wrong. Please try again.",
 			"validation": "Check the form fields.",
-			"noTelegram": "Open this mini app from Telegram.",
-			"consent": "Please confirm your consent to data processing."
+			"noTelegram": "Open this mini app from Telegram."
 		},
-		"budget": {
-			"lt_1k": "under $1,000",
-			"1k_5k": "$1,000–5,000",
-			"5k_15k": "$5,000–15,000",
-			"gt_15k": "over $15,000",
-			"unknown": "Not sure yet"
+		"companySize": {
+			"1_10": "1–10",
+			"11_50": "11–50",
+			"51_200": "51–200",
+			"200_plus": "200+"
 		}
 	},
 	"faq": {

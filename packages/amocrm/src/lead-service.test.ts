@@ -9,7 +9,8 @@ const pipeline: LeadPipelineConfig = {
 	responsibleUserId: 3,
 	product: { fieldId: 900, enums: { "crm-sales-automation": 901 } },
 	channel: { fieldId: 910, enums: { site: 911, telegram_miniapp: 912 } },
-	budget: { fieldId: 920, enums: { "1k_5k": 921 } }
+	budget: { fieldId: 920, enums: { "1k_5k": 921 } },
+	companySize: { fieldId: 930, enums: { "11_50": 932 } }
 };
 
 const request: LeadRequest = {
@@ -19,6 +20,7 @@ const request: LeadRequest = {
 	email: "ivan@example.com",
 	description: "Need amoCRM integrated with our website",
 	budget: "1k_5k",
+	companySize: "11_50",
 	locale: "ru",
 	startParam: "ig_msp_oct",
 	tgUserId: 123456,
@@ -67,6 +69,7 @@ describe("createLead", () => {
 				{ field_id: 900, values: [{ enum_id: 901 }] },
 				{ field_id: 910, values: [{ enum_id: 912 }] },
 				{ field_id: 920, values: [{ enum_id: 921 }] },
+				{ field_id: 930, values: [{ enum_id: 932 }] },
 				{ field_id: 1457167, values: [{ value: "123456" }] },
 				{ field_id: 293381, values: [{ value: "ig" }] },
 				{ field_id: 293379, values: [{ value: "msp_oct" }] }
@@ -86,9 +89,26 @@ describe("createLead", () => {
 		expect(note).toContain(request.description);
 		expect(note).toContain("start_param: ig_msp_oct");
 		expect(note).toContain("Язык: ru");
+		expect(note).toContain("Размер компании: 11–50 сотрудников");
 		expect(client.addTask).toHaveBeenCalledWith(
 			expect.objectContaining({ leadId: 77, responsibleUserId: 3, completeTill: new Date("2026-10-05T05:15:00Z") })
 		);
+	});
+
+	it("leaves the comment out of the note when there is none", async () => {
+		const client = fakeClient();
+		const { service } = setup(client);
+		await service.createLead({ ...request, description: undefined }, "site");
+		const note = client.addNote.mock.calls[0]![1];
+		expect(note).not.toContain("Комментарий");
+		expect(note).toContain("Услуга: CRM и автоматизация продаж");
+	});
+
+	it("dedupes foreign E.164 numbers on the full digits", async () => {
+		const client = fakeClient();
+		const { service } = setup(client);
+		await service.createLead({ ...request, phone: "+7 701 234 56 78" }, "site");
+		expect(client.findContactByPhone).toHaveBeenCalledWith("77012345678");
 	});
 
 	it("skips enum fields whose ids are not configured yet", async () => {

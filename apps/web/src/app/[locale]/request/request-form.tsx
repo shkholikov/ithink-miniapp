@@ -6,7 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useLocale, useTranslations } from 'next-intl';
 import { CheckCircle2, Loader2, Phone } from 'lucide-react';
 import {
-  BUDGET_RANGES,
+  COMPANY_SIZES,
   LeadInputSchema,
   parseStartParam,
   type LeadInput,
@@ -17,6 +17,7 @@ import { getWebApp, hapticError, hapticImpact, hapticSuccess } from '@/lib/teleg
 import { IconSquare } from '@/components/icon-square';
 import { GroupedCard } from '@/components/grouped-card';
 import { cn } from '@/lib/utils';
+import { PhoneField } from './phone-field';
 
 export interface ServiceOption {
   slug: ServiceSlug;
@@ -26,8 +27,6 @@ export interface ServiceOption {
 }
 
 type Step = 1 | 2 | 3 | 'done';
-
-const PRIVACY_URL = process.env.NEXT_PUBLIC_PRIVACY_URL;
 
 interface Props {
   options: ServiceOption[];
@@ -53,8 +52,7 @@ export function RequestForm({ options, preselected }: Props) {
       description: '',
       name: '',
       phone: '',
-      email: undefined,
-      budget: undefined,
+      company_size: undefined,
       locale,
     },
     mode: 'onChange',
@@ -83,7 +81,8 @@ export function RequestForm({ options, preselected }: Props) {
     getWebApp()?.requestContact?.((shared, result) => {
       const contact = result?.responseUnsafe?.contact;
       if (!shared || !contact?.phone_number) return;
-      setValue('phone', contact.phone_number, { shouldValidate: true });
+      const digits = contact.phone_number.replace(/\D/g, '');
+      setValue('phone', `+${digits}`, { shouldValidate: true });
       if (!watch('name')) {
         const name = [contact.first_name, contact.last_name].filter(Boolean).join(' ');
         if (name) setValue('name', name, { shouldValidate: true });
@@ -92,8 +91,8 @@ export function RequestForm({ options, preselected }: Props) {
   };
 
   const selectedService = watch('service');
-  const description = watch('description');
-  const budget = watch('budget');
+  const companySize = watch('company_size');
+  const privacyUrl = `https://ithink.uz/${locale}/privacy`;
   const selectedOption = useMemo(
     () => options.find((o) => o.slug === selectedService),
     [options, selectedService],
@@ -223,33 +222,30 @@ export function RequestForm({ options, preselected }: Props) {
               placeholder={t('fields.descriptionPlaceholder')}
               className="resize-none rounded-2xl bg-card px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-[color:var(--color-brand)]/40"
             />
-            {errors.description ? (
-              <span className="px-1 text-xs text-red-400">{errors.description.message}</span>
-            ) : null}
           </label>
 
           <div className="flex flex-col gap-2">
             <span className="px-1 text-xs font-medium uppercase tracking-wide text-muted-foreground">
-              {t('fields.budget')}
+              {t('fields.companySize')}
             </span>
             <div className="flex flex-wrap gap-2">
-              {BUDGET_RANGES.map((range) => {
-                const active = budget === range;
+              {COMPANY_SIZES.map((size) => {
+                const active = companySize === size;
                 return (
                   <button
-                    key={range}
+                    key={size}
                     type="button"
                     aria-pressed={active}
                     onClick={() => {
                       hapticImpact('light');
-                      setValue('budget', active ? undefined : range);
+                      setValue('company_size', active ? undefined : size);
                     }}
                     className={cn(
                       'rounded-full bg-card px-4 py-2 text-sm transition-colors',
                       active && 'bg-[color:var(--color-brand)] text-white',
                     )}
                   >
-                    {t(`budget.${range}`)}
+                    {t(`companySize.${size}`)}
                   </button>
                 );
               })}
@@ -259,11 +255,6 @@ export function RequestForm({ options, preselected }: Props) {
           <button
             type="button"
             onClick={() => {
-              if (description.trim().length < 10) {
-                setValue('description', description, { shouldValidate: true });
-                hapticError();
-                return;
-              }
               hapticImpact('light');
               setStep(3);
             }}
@@ -295,53 +286,21 @@ export function RequestForm({ options, preselected }: Props) {
             register={register('name')}
             autoComplete="name"
           />
-          <InputField
-            label={t('fields.phone')}
-            error={errors.phone?.message}
-            register={register('phone')}
-            inputMode="tel"
-            autoComplete="tel"
+          <Controller
+            control={control}
+            name="phone"
+            render={({ field }) => (
+              <PhoneField
+                label={t('fields.phone')}
+                countryLabel={t('fields.country')}
+                otherLabel={t('fields.otherCountry')}
+                value={field.value}
+                error={errors.phone?.message}
+                onChange={field.onChange}
+                onBlur={field.onBlur}
+              />
+            )}
           />
-          <InputField
-            label={t('fields.email')}
-            error={errors.email?.message}
-            register={register('email')}
-            inputMode="email"
-            autoComplete="email"
-            type="email"
-          />
-
-          <label className="flex items-start gap-3 px-1">
-            <input
-              type="checkbox"
-              {...register('consent')}
-              className="mt-0.5 size-4 shrink-0 accent-[color:var(--color-brand)]"
-            />
-            <span className="text-xs text-muted-foreground">
-              {t.rich('fields.consent', {
-                link: (chunks) =>
-                  PRIVACY_URL ? (
-                    <a
-                      href={PRIVACY_URL}
-                      onClick={(event) => {
-                        const webApp = getWebApp();
-                        if (!webApp) return;
-                        event.preventDefault();
-                        webApp.openLink(PRIVACY_URL);
-                      }}
-                      className="text-[color:var(--color-brand)] underline"
-                    >
-                      {chunks}
-                    </a>
-                  ) : (
-                    chunks
-                  ),
-              })}
-            </span>
-          </label>
-          {errors.consent ? (
-            <span className="px-1 text-xs text-red-400">{t('errors.consent')}</span>
-          ) : null}
 
           {serverError ? (
             <p className="px-1 text-sm text-red-400">{serverError}</p>
@@ -361,6 +320,25 @@ export function RequestForm({ options, preselected }: Props) {
               <span>{t('fields.submit')}</span>
             )}
           </button>
+
+          <p className="px-1 text-center text-xs text-muted-foreground">
+            {t.rich('fields.privacy', {
+              link: (chunks) => (
+                <a
+                  href={privacyUrl}
+                  onClick={(event) => {
+                    const webApp = getWebApp();
+                    if (!webApp) return;
+                    event.preventDefault();
+                    webApp.openLink(privacyUrl);
+                  }}
+                  className="text-[color:var(--color-brand)] underline"
+                >
+                  {chunks}
+                </a>
+              ),
+            })}
+          </p>
         </div>
       ) : null}
     </form>
@@ -389,12 +367,10 @@ interface InputFieldProps {
   label: string;
   error?: string;
   register: UseFormRegisterReturn;
-  inputMode?: 'text' | 'tel' | 'email';
   autoComplete?: string;
-  type?: string;
 }
 
-function InputField({ label, error, register, inputMode, autoComplete, type }: InputFieldProps) {
+function InputField({ label, error, register, autoComplete }: InputFieldProps) {
   return (
     <label className="flex flex-col gap-2">
       <span className="px-1 text-xs font-medium uppercase tracking-wide text-muted-foreground">
@@ -402,8 +378,7 @@ function InputField({ label, error, register, inputMode, autoComplete, type }: I
       </span>
       <input
         {...register}
-        type={type ?? 'text'}
-        inputMode={inputMode}
+        type="text"
         autoComplete={autoComplete}
         className="rounded-2xl bg-card px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-[color:var(--color-brand)]/40"
       />

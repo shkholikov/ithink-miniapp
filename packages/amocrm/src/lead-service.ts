@@ -1,5 +1,5 @@
 import type { Logger } from "pino";
-import type { Attribution, BudgetRange, LeadChannel, Locale, ServiceSlug } from "@ithink/types";
+import type { Attribution, BudgetRange, CompanySize, LeadChannel, Locale, ServiceSlug } from "@ithink/types";
 import type { AmoCrmClient } from "./client";
 import { CONTACT_FIELDS, LEAD_FIELDS } from "./fields";
 import { normalizePhone } from "./phone";
@@ -12,8 +12,9 @@ export interface LeadRequest {
 	phone: string;
 	email?: string;
 	telegram?: string;
-	description: string;
+	description?: string;
 	budget?: BudgetRange;
+	companySize?: CompanySize;
 	locale: Locale;
 	pageUrl?: string;
 	startParam?: string;
@@ -56,6 +57,13 @@ const BUDGET_LABELS: Record<BudgetRange, string> = {
 	"5k_15k": "$5 000–15 000",
 	gt_15k: "более $15 000",
 	unknown: "не знаю"
+};
+
+const COMPANY_SIZE_LABELS: Record<CompanySize, string> = {
+	"1_10": "1–10 сотрудников",
+	"11_50": "11–50 сотрудников",
+	"51_200": "51–200 сотрудников",
+	"200_plus": "более 200 сотрудников"
 };
 
 const UTM_KEYS = ["utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term", "referrer", "fbclid", "gclid"] as const;
@@ -148,6 +156,7 @@ function leadFields(req: LeadRequest, channel: LeadChannel, pipeline: LeadPipeli
 		enumValue(pipeline.product, req.service),
 		enumValue(pipeline.channel, channel),
 		enumValue(pipeline.budget, req.budget),
+		enumValue(pipeline.companySize, req.companySize),
 		req.tgUserId ? { field_id: LEAD_FIELDS.tgUserId, values: [{ value: String(req.tgUserId) }] } : null,
 		...UTM_KEYS.map((key) => {
 			const value = req.attribution?.[key];
@@ -188,8 +197,13 @@ function buildNote(req: LeadRequest, channel: LeadChannel, label: string, { repe
 		: [];
 	return [
 		header,
-		lines([...contact, ["Услуга", label], ["Бюджет", req.budget && BUDGET_LABELS[req.budget]]]),
-		`Описание:\n${req.description}`,
+		lines([
+			...contact,
+			["Услуга", label],
+			["Размер компании", req.companySize && COMPANY_SIZE_LABELS[req.companySize]],
+			["Бюджет", req.budget && BUDGET_LABELS[req.budget]]
+		]),
+		req.description && `Комментарий:\n${req.description}`,
 		lines([
 			["Язык", req.locale],
 			["Страница", req.pageUrl],
@@ -213,9 +227,10 @@ function buildSummary(req: LeadRequest, channel: LeadChannel, label: string): st
 			["Telegram", username && `@${username}`],
 			["Telegram ID", req.tgUserId],
 			["Услуга", label],
+			["Размер компании", req.companySize && COMPANY_SIZE_LABELS[req.companySize]],
 			["Бюджет", req.budget && BUDGET_LABELS[req.budget]]
 		]),
-		`Описание:\n${req.description}`,
+		req.description && `Комментарий:\n${req.description}`,
 		lines([
 			["Язык", req.locale],
 			["Страница", req.pageUrl],

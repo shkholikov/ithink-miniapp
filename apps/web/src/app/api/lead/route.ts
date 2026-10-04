@@ -28,7 +28,7 @@ export async function POST(request: Request) {
 		return NextResponse.json({ error: "validation", issues: parsed.error.flatten() }, { status: 400 });
 	}
 
-	const { initData, consent: _consent, ...input } = parsed.data;
+	const { initData, consent: _consent, company_size, ...input } = parsed.data;
 
 	const verification = verifyInitData(initData, botToken);
 	if (!verification.ok) {
@@ -44,6 +44,8 @@ export async function POST(request: Request) {
 			{
 				...input,
 				email: input.email || undefined,
+				description: input.description || undefined,
+				companySize: company_size,
 				telegram: undefined,
 				startParam,
 				tgUserId: verification.user?.id,
