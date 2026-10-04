@@ -1,7 +1,7 @@
 import type { NextConfig } from 'next';
 import createNextIntlPlugin from 'next-intl/plugin';
 
-import { missingProductionEnv } from './src/lib/leads/required-env';
+import { missingProductionEnv, missingRecommendedEnv } from './src/lib/leads/required-env';
 
 const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts');
 
@@ -11,6 +11,10 @@ if (process.env.VERCEL_ENV === 'production') {
   const missing = missingProductionEnv();
   if (missing.length) {
     throw new Error(`Lead intake is misconfigured, missing env: ${missing.join(', ')}`);
+  }
+  const recommended = missingRecommendedEnv();
+  if (recommended.length) {
+    console.warn(`Lead intake runs degraded, missing env: ${recommended.join(', ')}`);
   }
 }
 

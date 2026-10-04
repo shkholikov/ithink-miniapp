@@ -2,12 +2,16 @@ import pino from "pino";
 import { createAmoCrmClient, createLeadService, parseAmoEnv, type LeadService } from "@ithink/amocrm";
 import type { ServiceSlug } from "@ithink/types";
 import ru from "../../../messages/ru.json";
-import { missingProductionEnv } from "./required-env";
+import { missingProductionEnv, missingRecommendedEnv } from "./required-env";
 
 export function assertLeadIntakeEnv(): void {
 	const missing = missingProductionEnv();
 	if (missing.length) {
 		throw new Error(`Lead intake is misconfigured, missing env: ${missing.join(", ")}`);
+	}
+	const recommended = missingRecommendedEnv();
+	if (recommended.length) {
+		console.warn(`Lead intake runs degraded, missing env: ${recommended.join(", ")}`);
 	}
 	getLeadService();
 }
