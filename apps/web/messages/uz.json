@@ -100,6 +100,11 @@
 			"short": "Sertifikatlar va amaliy kurslar",
 			"description": "Xodimlarni IT yoʻnalishlari boʻyicha oʻqitish va sertifikatlash."
 		},
+		"other": {
+			"title": "Boshqa",
+			"short": "Boshqa",
+			"description": "Boshqa"
+		},
 		"detail": {
 			"benefits": "Siz nimaga ega boʻlasiz",
 			"cases": "Bogʻliq keyslar",

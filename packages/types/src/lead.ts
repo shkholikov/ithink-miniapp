@@ -112,6 +112,7 @@ export function parseStartParam(raw: string | undefined | null): StartParam | nu
 	const separator = value.indexOf("_");
 	const source = separator === -1 ? value : value.slice(0, separator);
 	const campaign = separator === -1 ? undefined : value.slice(separator + 1) || undefined;
-	const service = SERVICE_SLUGS.find((slug) => value.includes(slug));
+	// "other" is too short to match by substring ("another_campaign").
+	const service = SERVICE_SLUGS.find((slug) => slug !== "other" && value.includes(slug));
 	return { source, campaign, service };
 }

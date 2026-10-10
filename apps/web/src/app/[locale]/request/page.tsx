@@ -17,6 +17,7 @@ export default async function RequestPage({ searchParams }: Props) {
     color: s.color,
     icon: s.icon,
   }));
+  options.push({ slug: 'other', title: t('services.other.title'), color: '#64748b', icon: 'MoreHorizontal' });
 
   return (
     <>

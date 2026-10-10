@@ -100,6 +100,11 @@
 			"short": "Certification and hands-on courses",
 			"description": "Training and certification for teams across key IT disciplines."
 		},
+		"other": {
+			"title": "Other",
+			"short": "Other",
+			"description": "Other"
+		},
 		"detail": {
 			"benefits": "What you get",
 			"cases": "Related cases",

@@ -9,6 +9,7 @@ export const SERVICE_SLUGS = [
   'it-audit-consulting',
   'software-licenses',
   'corporate-training',
+  'other',
 ] as const;
 
 export const ServiceSlugSchema = z.enum(SERVICE_SLUGS);
